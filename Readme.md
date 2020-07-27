@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Anton Churkin](https://up.htmlacademy.ru/ecmascript/12/user/1094899).
-* Наставник: `Неизвестно`.
+* Наставник: `Екатерина Малецкая`.
 
 ---
 
