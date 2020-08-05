@@ -7,8 +7,15 @@ import {createEventSorterTemplate} from "./view/event-sorter.js";
 import {createEventFormTemplate} from "./view/event-form.js";
 import {createEventDayTemplate} from "./view/event-day.js";
 import {createEventItemTemplate} from "./view/event-item.js";
+import {generateEvent} from "../mocks/event.js";
+import {generateDestinations} from "../mocks/destinations.js";
+import {generateOffers} from "../mocks/offers.js";
 
 const TRIP_EVENT_COUNT = 3;
+
+const destinations = generateDestinations();
+const tripOffers = generateOffers();
+const tripEvents = new Array(TRIP_EVENT_COUNT).fill().map(() => generateEvent(destinations, tripOffers));
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -36,5 +43,5 @@ render(tripEventsElement, createEventDayTemplate(), `beforeend`);
 const tripDayElement = tripEventsElement.querySelector(`.trip-events__list`);
 
 for (let i = 0; i < TRIP_EVENT_COUNT; i++) {
-  render(tripDayElement, createEventItemTemplate(), `beforeend`);
+  render(tripDayElement, createEventItemTemplate(tripEvents[i]), `beforeend`);
 }
