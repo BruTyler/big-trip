@@ -1,6 +1,7 @@
 import moment from 'moment';
 import {pickEventPretext} from '../utils/trip.js';
 import {capitilizeFirstLetter, humanizeDuration} from '../utils/common.js';
+import {BuisnessRequirements} from '../const.js';
 
 const createOfferItemTemplate = ({name, price}) => {
   return (
@@ -18,6 +19,7 @@ const createOffersTemplate = (offers) => {
   }
 
   const offerItems = offers
+    .slice(0, BuisnessRequirements.MAX_VISIBLE_OFFERS_PER_POINT)
     .map((o) => createOfferItemTemplate(o))
     .join(``);
 

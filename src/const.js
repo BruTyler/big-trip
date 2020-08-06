@@ -20,3 +20,7 @@ export const PretextType = {
   MOVE: `to`,
   ACTIVITY: `in`,
 };
+
+export const BuisnessRequirements = {
+  MAX_VISIBLE_OFFERS_PER_POINT: 3,
+};
