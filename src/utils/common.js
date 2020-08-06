@@ -8,6 +8,14 @@ export const transformToStringId = (word) => {
   return word.replace(/\s/g, ``).slice(0, 12).toLowerCase();
 };
 
+export const excludeRepeatingInSequence = (repeatingItems) =>
+  repeatingItems.reduce((clearItems, item) => {
+    if (clearItems.length === 0 || clearItems[clearItems.length - 1] !== item) {
+      clearItems.push(item);
+    }
+    return clearItems;
+  }, []);
+
 const addLeadZero = (digit) => {
   return digit < 10
     ? `0` + digit
