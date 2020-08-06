@@ -38,7 +38,7 @@ render(tripMenuElement, createEventFilterTemplate(), `beforeend`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 render(tripEventsElement, createEventSorterTemplate(), `beforeend`);
 
-render(tripEventsElement, createEventEditorTemplate(tripEvents[0]), `beforeend`);
+render(tripEventsElement, createEventEditorTemplate(tripEvents[0], destinations, tripOffers), `beforeend`);
 
 render(tripEventsElement, createEventDayTemplate(), `beforeend`);
 

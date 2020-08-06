@@ -3,10 +3,10 @@ import {pickEventPretext} from '../utils/trip.js';
 import {capitilizeFirstLetter, humanizeDuration} from '../utils/common.js';
 import {BuisnessRequirements} from '../const.js';
 
-const createOfferItemTemplate = ({name, price}) => {
+const createOfferItemTemplate = ({title, price}) => {
   return (
     `<li class="event__offer">
-      <span class="event__offer-title">${name}</span>
+      <span class="event__offer-title">${title}</span>
       +
       €&nbsp;<span class="event__offer-price">${price}</span>
     </li>`

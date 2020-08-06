@@ -24,3 +24,7 @@ export const PretextType = {
 export const BuisnessRequirements = {
   MAX_VISIBLE_OFFERS_PER_POINT: 3,
 };
+
+export const DefaultValues = {
+  POINT_ID: 0,
+};

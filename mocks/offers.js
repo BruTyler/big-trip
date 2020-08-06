@@ -8,7 +8,7 @@ const getRandomOffers = () => {
   return new Array(offerCount)
     .fill()
     .map(() => ({
-      name: pickRandomElement(offerDetails),
+      title: pickRandomElement(offerDetails),
       price: generateRandomInt(10, 200)
     }));
 };
