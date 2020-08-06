@@ -16,7 +16,7 @@ export const ActivityType = {
 
 export const EventType = Object.assign({}, MoveType, ActivityType);
 
-export const PlaceholderType = {
+export const PretextType = {
   MOVE: `to`,
   ACTIVITY: `in`,
 };
