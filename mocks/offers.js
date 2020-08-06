@@ -1,4 +1,4 @@
-import {EventType} from '../const.js';
+import {EventType} from '../src/const.js';
 import {generateRandomInt, pickRandomElement} from '../utils/random.js';
 
 const offerDetails = [`Rent a car`, `Good option`, `Perfect option`, `Ideal option`, `Improve class`, `Take a boost`];

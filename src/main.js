@@ -11,7 +11,7 @@ import {generateEvent} from "../mocks/event.js";
 import {generateDestinations} from "../mocks/destinations.js";
 import {generateOffers} from "../mocks/offers.js";
 
-const TRIP_EVENT_COUNT = 3;
+const TRIP_EVENT_COUNT = 20;
 
 const destinations = generateDestinations();
 const tripOffers = generateOffers();
@@ -37,11 +37,13 @@ render(tripMenuElement, createEventFilterTemplate(), `beforeend`);
 
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 render(tripEventsElement, createEventSorterTemplate(), `beforeend`);
-render(tripEventsElement, createEventFormTemplate(), `beforeend`);
+
+render(tripEventsElement, createEventFormTemplate(tripEvents[0]), `beforeend`);
+
 render(tripEventsElement, createEventDayTemplate(), `beforeend`);
 
 const tripDayElement = tripEventsElement.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < TRIP_EVENT_COUNT; i++) {
+for (let i = 1; i < TRIP_EVENT_COUNT; i++) {
   render(tripDayElement, createEventItemTemplate(tripEvents[i]), `beforeend`);
 }

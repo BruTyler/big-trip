@@ -1,6 +1,6 @@
 import moment from 'moment';
-import {pickEventPretext} from '../../utils/trip.js';
-import {capitilizeFirstLetter, humanizeDuration} from '../../utils/common.js';
+import {pickEventPretext} from '../utils/trip.js';
+import {capitilizeFirstLetter, humanizeDuration} from '../utils/common.js';
 
 const createOfferItemTemplate = ({name, price}) => {
   return (

@@ -1,4 +1,19 @@
-export const createEventFormTemplate = () => {
+/* eslint-disable no-unused-vars */
+import {EventType} from '../const';
+import {nanoid} from 'nanoid';
+
+export const createEventFormTemplate = (eventItem = {}) => {
+
+  const {
+    id = nanoid(5),
+    destination = null,
+    type = EventType.BUS,
+    basePrice = ``,
+    offers = [],
+    startDate = new Date(),
+    finishDate = new Date(),
+  } = eventItem;
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
