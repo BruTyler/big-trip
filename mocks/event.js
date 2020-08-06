@@ -1,5 +1,5 @@
 import {nanoid} from 'nanoid';
-import {pickRandomElement, generateRandomInt, pickRandomDate, pickRandomElements} from '../utils/random.js';
+import {pickRandomElement, generateRandomInt, pickRandomDate, pickRandomElements} from '../src/utils/random.js';
 import {EventType} from '../src/const.js';
 
 

@@ -26,7 +26,7 @@ const createOffersTemplate = (offers) => {
   </ul>`;
 };
 
-export const createEventItemTemplate = ({destination, type, basePrice, offers, startDate, finishDate}) => {
+export const createEventPointTemplate = ({destination, type, basePrice, offers, startDate, finishDate}) => {
   return (
     `<li class="trip-events__item">
       <div class="event">

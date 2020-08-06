@@ -2,7 +2,7 @@
 import {EventType} from '../const';
 import {nanoid} from 'nanoid';
 
-export const createEventFormTemplate = (eventItem = {}) => {
+export const createEventEditorTemplate = (eventItem = {}) => {
 
   const {
     id = nanoid(5),
