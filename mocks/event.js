@@ -19,6 +19,6 @@ export const generateEvent = (availableDestinations, availableOffers) => {
     offers: pickRandomElements(filteredOffers),
     startDate,
     finishDate: pickRandomDate(maxDurationEventMinutes, startDate),
-    isFavorite: false,
+    isFavorite: Boolean(generateRandomInt(0, 1)),
   };
 };

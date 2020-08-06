@@ -57,8 +57,8 @@ const createOfferItemTemplate = (pointId, offer, isChecked) => {
   );
 };
 
-const createConcreteDestinationTemplate = (destination) => {
-  if (destination === null || !destination.name) {
+const createConcreteDestinationTemplate = (pointId, destination) => {
+  if (destination === null || !destination.name || pointId !== DefaultValues.POINT_ID) {
     return ``;
   }
 
@@ -173,7 +173,7 @@ export const createEventEditorTemplate = (eventItem = {}, destinations = [], tri
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         ${createResetButtonTemplate(id)}
-        
+
         ${createFavoriteButtonTemplate(id, isFavorite)}
         ${createRollupButtonTemplate(id)}
       </header>
@@ -182,7 +182,7 @@ export const createEventEditorTemplate = (eventItem = {}, destinations = [], tri
           ${createAvailableOffersTemplate(id, availableOffers, offers)}
         </section>
         <section class="event__section  event__section--destination">
-          ${createConcreteDestinationTemplate(destination)}
+          ${createConcreteDestinationTemplate(id, destination)}
         </section>
       </section>
     </form>`
