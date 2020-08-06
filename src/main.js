@@ -28,8 +28,8 @@ const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
 render(tripMainElement, createTripSummaryTemplate(), `afterbegin`);
 
 const tripInfoElement = tripMainElement.querySelector(`.trip-info`);
-render(tripInfoElement, createTripPathTemplate(), `beforeend`);
-render(tripInfoElement, createTripCostTemplate(), `beforeend`);
+render(tripInfoElement, createTripPathTemplate(tripEvents), `beforeend`);
+render(tripInfoElement, createTripCostTemplate(tripEvents), `beforeend`);
 
 const tripMenuElement = siteHeaderElement.querySelector(`.trip-controls`);
 render(tripMenuElement, createTripTabsTemplate(), `beforeend`);
