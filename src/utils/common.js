@@ -11,7 +11,7 @@ export const transformToStringId = (word) => {
 export const excludeRepeatingInSequence = (repeatingItems) =>
   repeatingItems.reduce((clearItems, item) => {
     if (clearItems.length === 0 || clearItems[clearItems.length - 1] !== item) {
-      clearItems.push(item);
+      return [...clearItems, item];
     }
     return clearItems;
   }, []);
