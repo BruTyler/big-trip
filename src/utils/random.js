@@ -12,7 +12,7 @@ export const pickRandomElement = (array) => {
   return array[randomIndex];
 };
 
-export const pickRandomElements = (array) => {
+export const pickRandomElements = (array, minElementCount, maxElementCount) => {
   if (array === undefined || array === null) {
     throw new Error(`Incorrect array`);
   }
@@ -21,7 +21,7 @@ export const pickRandomElements = (array) => {
     return [];
   }
 
-  const elementsCount = generateRandomInt(0, array.length - 1);
+  const elementsCount = generateRandomInt(minElementCount, maxElementCount);
 
   if (elementsCount === 0) {
     return [];

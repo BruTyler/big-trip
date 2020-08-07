@@ -1,14 +1,14 @@
 import {EventType} from '../src/const.js';
-import {generateRandomInt, pickRandomElement} from '../src/utils/random.js';
+import {generateRandomInt, pickRandomElements} from '../src/utils/random.js';
 
 const offerDetails = [`Rent a car`, `Good option`, `Perfect option`, `Ideal option`, `Improve class`, `Take a boost`];
 
 const getRandomOffers = () => {
-  const offerCount = generateRandomInt(0, 5);
-  return new Array(offerCount)
-    .fill()
-    .map(() => ({
-      title: pickRandomElement(offerDetails),
+  const offers = pickRandomElements(offerDetails, 0, 5);
+
+  return offers
+    .map((title) => ({
+      title,
       price: generateRandomInt(10, 200)
     }));
 };

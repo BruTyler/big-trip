@@ -4,8 +4,13 @@ export const capitilizeFirstLetter = (word) => {
   return word.slice(0, 1).toUpperCase() + word.slice(1);
 };
 
+export const takeUniqueValues = (nonUniqueValues) => {
+  const uniqueValues = new Set(nonUniqueValues);
+  return Array.from(uniqueValues);
+};
+
 export const transformToStringId = (word) => {
-  return word.replace(/\s/g, ``).slice(0, 12).toLowerCase();
+  return word.replace(/\s/g, `-`).toLowerCase();
 };
 
 export const excludeRepeatingInSequence = (repeatingItems) =>
