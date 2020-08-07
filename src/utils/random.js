@@ -3,21 +3,21 @@ export const generateRandomInt = (min, max) => {
   return Math.round(rand);
 };
 
-export const pickRandomElement = (array) => {
-  if (array === undefined || array === null || array.length === 0) {
+export const pickRandomElement = (elements) => {
+  if (elements === undefined || elements === null || elements.length === 0) {
     throw new Error(`Incorrect array`);
   }
 
-  const randomIndex = generateRandomInt(0, array.length - 1);
-  return array[randomIndex];
+  const randomIndex = generateRandomInt(0, elements.length - 1);
+  return elements[randomIndex];
 };
 
-export const pickRandomElements = (array, minElementCount, maxElementCount) => {
-  if (array === undefined || array === null) {
+export const pickRandomElements = (elements, minElementCount, maxElementCount) => {
+  if (elements === undefined || elements === null) {
     throw new Error(`Incorrect array`);
   }
 
-  if (array.length === 0) {
+  if (elements.length === 0) {
     return [];
   }
 
@@ -27,7 +27,7 @@ export const pickRandomElements = (array, minElementCount, maxElementCount) => {
     return [];
   }
 
-  return array
+  return elements
     .slice()
     .sort(() => 0.5 - Math.random())
     .slice(0, elementsCount);
