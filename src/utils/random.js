@@ -27,8 +27,8 @@ export const pickRandomElements = (array, minElementCount, maxElementCount) => {
     return [];
   }
 
-  return Array
-    .from(array)
+  return array
+    .slice()
     .sort(() => 0.5 - Math.random())
     .slice(0, elementsCount);
 };

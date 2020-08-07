@@ -9,7 +9,6 @@ import {createEventDayTemplate} from './view/event-day.js';
 import {generateEvent} from '../mocks/event.js';
 import {generateDestinations} from '../mocks/destinations.js';
 import {generateOffers} from '../mocks/offers.js';
-import {takeUniqueValues} from './utils/common.js';
 import moment from 'moment';
 
 const TRIP_EVENT_COUNT = 20;
@@ -41,16 +40,14 @@ render(tripEventsElement, createEventSorterTemplate(), `beforeend`);
 
 render(tripEventsElement, createEventEditorTemplate(tripEvents[0], destinations, tripOffers), `beforeend`);
 
-const allPointDays = tripEvents.map((x) => moment(x.startDate).format(`YYYYMMDD`));
+tripEvents
+  .map((x) => moment(x.startDate).format(`YYYY-MM-DD`))
+  .filter((dayValue, index, eventDates) => eventDates.indexOf(dayValue) === index)
+  .sort((a, b) => moment(a) - moment(b))
+  .forEach((shortISODate, indexDate) => {
+    const dayCounter = indexDate + 1;
+    const dayDate = new Date(shortISODate);
+    const filteredEvents = tripEvents.filter((x) => moment(x.startDate).isSame(dayDate, `day`));
+    render(tripEventsElement, createEventDayTemplate(dayCounter, dayDate, filteredEvents), `beforeend`);
+  });
 
-const structuredDays = takeUniqueValues(allPointDays)
-  .sort((a, b) => a - b)
-  .reduce(
-      (accumulatedDays, currentDay, index) => accumulatedDays.set(index + 1, new Date(moment(currentDay, `YYYYMMDD`).toISOString())),
-      new Map()
-  );
-
-for (const [dayId, dayDate] of structuredDays) {
-  const filteredEvents = tripEvents.filter((x) => moment(x.startDate).isSame(dayDate, `day`));
-  render(tripEventsElement, createEventDayTemplate(dayId, dayDate, filteredEvents), `beforeend`);
-}

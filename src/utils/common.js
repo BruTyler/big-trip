@@ -4,11 +4,6 @@ export const capitilizeFirstLetter = (word) => {
   return word.slice(0, 1).toUpperCase() + word.slice(1);
 };
 
-export const takeUniqueValues = (nonUniqueValues) => {
-  const uniqueValues = new Set(nonUniqueValues);
-  return Array.from(uniqueValues);
-};
-
 export const transformToStringId = (word) => {
   return word.replace(/\s/g, `-`).toLowerCase();
 };
@@ -39,15 +34,15 @@ export const humanizeDuration = (finishDate, startDate) => {
   const readableDurations = [];
 
   if (duration._data.days > 0) {
-    readableDurations.push(`${addLeadZero(duration._data.days)}D`);
+    readableDurations.push(`${addLeadZero(duration.days())}D`);
   }
 
   if (duration._data.hours > 0) {
-    readableDurations.push(`${addLeadZero(duration._data.hours)}H`);
+    readableDurations.push(`${addLeadZero(duration.hours())}H`);
   }
 
   if (duration._data.minutes > 0) {
-    readableDurations.push(`${addLeadZero(duration._data.minutes)}M`);
+    readableDurations.push(`${addLeadZero(duration.minutes())}M`);
   }
 
   return readableDurations.join(` `);
