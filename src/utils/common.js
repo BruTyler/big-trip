@@ -33,15 +33,15 @@ export const humanizeDuration = (finishDate, startDate) => {
   const duration = moment.duration(startMoment.diff(finishMoment));
   const readableDurations = [];
 
-  if (duration._data.days > 0) {
+  if (duration.days() > 0) {
     readableDurations.push(`${addLeadZero(duration.days())}D`);
   }
 
-  if (duration._data.hours > 0) {
+  if (duration.hours() > 0) {
     readableDurations.push(`${addLeadZero(duration.hours())}H`);
   }
 
-  if (duration._data.minutes > 0) {
+  if (duration.minutes() > 0) {
     readableDurations.push(`${addLeadZero(duration.minutes())}M`);
   }
 
