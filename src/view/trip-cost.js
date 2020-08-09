@@ -1,10 +1,9 @@
+import {getTotalEventPrice} from '../utils/trip.js';
+
 export const createTripCostTemplate = (tripEvents) => {
 
   const cost = tripEvents.reduce(
-      (baseSum, event) => event.basePrice + baseSum + event.offers.reduce(
-          (offerSum, offer) => offer.price + offerSum,
-          0
-      ),
+      (accumulatedSum, event) => accumulatedSum + getTotalEventPrice(event),
       0
   );
 

@@ -28,3 +28,15 @@ export const BuisnessRequirements = {
 export const DefaultValues = {
   POINT_ID: 0,
 };
+
+export const SortType = {
+  EVENT: `event`,
+  PRICE: `price`,
+  TIME: `time`,
+};
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`,
+};

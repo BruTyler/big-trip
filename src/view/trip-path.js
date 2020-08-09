@@ -1,5 +1,7 @@
 import {excludeRepeatingInSequence} from '../utils/common.js';
 import moment from 'moment';
+import {getSorterRule} from '../utils/trip.js';
+import {SortType} from '../const.js';
 
 const createDatesTemplate = (sortedEvents) => {
   const tripStartDate = sortedEvents[0].startDate;
@@ -47,7 +49,9 @@ export const createTripPathTemplate = (tripEvents) => {
     return ``;
   }
 
-  const sortedEvents = Array.from(tripEvents).sort((a, b) => a.startDate - b.startDate);
+  const sortedEvents = tripEvents
+    .slice()
+    .sort(getSorterRule(SortType.EVENT));
 
   return (
     `<div class="trip-info__main">

@@ -9,7 +9,8 @@ import {createEventDayTemplate} from './view/event-day.js';
 import {generateEvent} from '../mocks/event.js';
 import {generateDestinations} from '../mocks/destinations.js';
 import {generateOffers} from '../mocks/offers.js';
-import moment from 'moment';
+import {getSorterRule, splitEventsByDays, getFilterRule} from './utils/trip.js';
+import {SortType, FilterType} from './const.js';
 
 const TRIP_EVENT_COUNT = 20;
 
@@ -38,16 +39,16 @@ render(tripMenuElement, createEventFilterTemplate(), `beforeend`);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 render(tripEventsElement, createEventSorterTemplate(), `beforeend`);
 
-render(tripEventsElement, createEventEditorTemplate(tripEvents[0], destinations, tripOffers), `beforeend`);
+const sortedTripEvents = tripEvents
+  .filter(getFilterRule(FilterType.EVERYTHING))
+  .sort(getSorterRule(SortType.EVENT));
 
-tripEvents
-  .map((x) => moment(x.startDate).format(`YYYY-MM-DD`))
-  .filter((dayValue, index, eventDates) => eventDates.indexOf(dayValue) === index)
-  .sort((a, b) => moment(a) - moment(b))
-  .forEach((shortISODate, indexDate) => {
-    const dayCounter = indexDate + 1;
-    const dayDate = new Date(shortISODate);
-    const filteredEvents = tripEvents.filter((x) => moment(x.startDate).isSame(dayDate, `day`));
-    render(tripEventsElement, createEventDayTemplate(dayCounter, dayDate, filteredEvents), `beforeend`);
-  });
+render(tripEventsElement, createEventEditorTemplate(sortedTripEvents[0], destinations, tripOffers), `beforeend`);
 
+const groupedEvents = splitEventsByDays(sortedTripEvents);
+
+Object.keys(groupedEvents).forEach((shortDay, dayIndex) => {
+  const eventDay = new Date(shortDay);
+  const dayId = dayIndex + 1;
+  render(tripEventsElement, createEventDayTemplate(dayId, eventDay, groupedEvents[shortDay]), `beforeend`);
+});

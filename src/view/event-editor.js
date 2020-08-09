@@ -155,12 +155,12 @@ export const createEventEditorTemplate = (eventItem = {}, destinations = [], tri
           <label class="visually-hidden" for="event-start-time-${id}">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${moment(startDate).format(`DD/MM/YY hh:mm`)}">
+          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${moment(startDate).format(`DD/MM/YY HH:mm`)}">
           —
           <label class="visually-hidden" for="event-end-time-${id}">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${moment(finishDate).format(`DD/MM/YY hh:mm`)}">
+          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${moment(finishDate).format(`DD/MM/YY HH:mm`)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

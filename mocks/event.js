@@ -2,7 +2,6 @@ import {nanoid} from 'nanoid';
 import {pickRandomElement, generateRandomInt, pickRandomDate, pickRandomElements} from '../src/utils/random.js';
 import {EventType} from '../src/const.js';
 
-
 const maxStartDaysGap = 4;
 const maxDurationEventMinutes = 135;
 
