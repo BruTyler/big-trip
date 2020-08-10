@@ -2,6 +2,7 @@ import {excludeRepeatingInSequence} from '../utils/common.js';
 import moment from 'moment';
 import {getSorterRule} from '../utils/trip.js';
 import {SortType} from '../const.js';
+import {createElement} from '../utils/render.js';
 
 const createDatesTemplate = (sortedEvents) => {
   const tripStartDate = sortedEvents[0].startDate;
@@ -44,7 +45,7 @@ const createCitiesTemplate = (sortedEvents) => {
 };
 
 
-export const createTripPathTemplate = (tripEvents) => {
+const createTripPathTemplate = (tripEvents) => {
   if (tripEvents.length === 0) {
     return ``;
   }
@@ -60,3 +61,26 @@ export const createTripPathTemplate = (tripEvents) => {
     </div>`
   );
 };
+
+export default class TripPath {
+  constructor(tripEvents) {
+    this._tripEvents = tripEvents;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripPathTemplate(this._tripEvents);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

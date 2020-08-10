@@ -1,4 +1,6 @@
-export const createEventFilterTemplate = () => {
+import {createElement} from '../utils/render.js';
+
+const createEventFilterTemplate = () => {
   return (
     `<h2 class="visually-hidden">Filter events</h2>
     <form class="trip-filters" action="#" method="get">
@@ -21,3 +23,25 @@ export const createEventFilterTemplate = () => {
     </form>`
   );
 };
+
+export default class EventFilter {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFilterTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

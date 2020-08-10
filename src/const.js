@@ -27,6 +27,7 @@ export const BuisnessRequirements = {
 
 export const DefaultValues = {
   POINT_ID: 0,
+  DAY_ID: 0,
 };
 
 export const SortType = {
@@ -39,4 +40,9 @@ export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
   PAST: `past`,
+};
+
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
 };
