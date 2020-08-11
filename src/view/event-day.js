@@ -1,24 +1,26 @@
 import moment from 'moment';
-import EventPointView from './event-point.js';
 import {createElement} from '../utils/render.js';
 
-const createEventPointsTemplate = (tripEvents) => {
-  return tripEvents
-    .map((event) => new EventPointView(event).getTemplate())
-    .join(``);
+const createDayTitleTemplate = (dayId, eventDate) => {
+  if (dayId === null) {
+    return ``;
+  }
+
+  return (
+    `<span class="day__counter">${dayId}</span>
+    <time class="day__date" datetime="${moment(eventDate).format(`YYYY-MM-DD`)}">${moment(eventDate).format(`MMM DD`)}</time>`
+  );
 };
 
-const createEventDayTemplate = (dayId, eventDate, tripEvents) => {
+const createEventDayTemplate = (dayId, eventDate) => {
   return (
     `<ul class="trip-days">
       <li class="trip-days__item  day">
         <div class="day__info">
-          <span class="day__counter">${dayId}</span>
-          <time class="day__date" datetime="${moment(eventDate).format(`YYYY-MM-DD`)}">${moment(eventDate).format(`MMM DD`)}</time>
+          ${createDayTitleTemplate(dayId, eventDate)}
         </div>
 
         <ul class="trip-events__list">
-          ${createEventPointsTemplate(tripEvents)}
         </ul>
       </li>
     </ul>`
@@ -26,15 +28,14 @@ const createEventDayTemplate = (dayId, eventDate, tripEvents) => {
 };
 
 export default class EventDay {
-  constructor(dayId, eventDate, tripEvents) {
+  constructor(dayId = null, eventDate = null) {
     this._dayId = dayId;
     this._eventDate = eventDate;
-    this._tripEvents = tripEvents;
     this._element = null;
   }
 
   getTemplate() {
-    return createEventDayTemplate(this._dayId, this._eventDate, this._tripEvents);
+    return createEventDayTemplate(this._dayId, this._eventDate);
   }
 
   getElement() {
