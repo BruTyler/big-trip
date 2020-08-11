@@ -21,6 +21,36 @@ const destinations = generateDestinations();
 const tripOffers = generateOffers();
 const tripEvents = new Array(TRIP_EVENT_COUNT).fill().map(() => generateEvent(destinations, tripOffers));
 
+const renderPoint = (dayContainer, tripEvent) => {
+  const pointContainer = dayContainer.querySelector(`.trip-events__list`);
+
+  const eventPointComponent = new EventPointView(tripEvent);
+  const eventEditorComponent = new EventEditorView(tripEvent, destinations, tripOffers);
+
+  const replacePointToForm = () => {
+    pointContainer.replaceChild(eventEditorComponent.getElement(), eventPointComponent.getElement());
+  };
+
+  const replaceFormToPoint = () => {
+    pointContainer.replaceChild(eventPointComponent.getElement(), eventEditorComponent.getElement());
+  };
+
+  eventPointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replacePointToForm();
+  });
+
+  eventEditorComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceFormToPoint();
+  });
+
+  eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToPoint();
+  });
+
+  render(pointContainer, eventPointComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteMainElement = document.querySelector(`.page-main`);
 
@@ -34,7 +64,6 @@ render(tripSummaryComponent.getElement(), new TripCostView(tripEvents).getElemen
 const tripMenuElement = siteHeaderElement.querySelector(`.trip-controls`);
 render(tripMenuElement, new TripTabsView().getElement(), RenderPosition.BEFOREEND);
 render(tripMenuElement, new EventFilterView().getElement(), RenderPosition.BEFOREEND);
-
 render(tripMainElement, new EventAddButtonView().getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
@@ -43,13 +72,6 @@ render(tripEventsElement, new EventSorterView().getElement(), RenderPosition.BEF
 const sortedTripEvents = tripEvents
   .filter(getFilterRule(FilterType.EVERYTHING))
   .sort(getSorterRule(SortType.EVENT));
-
-render(tripEventsElement, new EventEditorView(sortedTripEvents[0], destinations, tripOffers).getElement(), RenderPosition.BEFOREEND);
-
-const renderPoint = (dayContainer, tripEvent) => {
-  const pointContainer = dayContainer.querySelector(`.trip-events__list`);
-  render(pointContainer, new EventPointView(tripEvent).getElement(), RenderPosition.BEFOREEND);
-};
 
 const groupedEvents = splitEventsByDays(sortedTripEvents);
 

@@ -198,7 +198,10 @@ export default class EventEditor {
     const {type: eventType} = eventItem;
     this._eventItem = eventItem;
     this._destinations = destinations;
-    this._availableOffers = tripOffers.find((x) => x.type === eventType).offers;
+    this._availableOffers = tripOffers.length === 0
+      ? []
+      : tripOffers.find((x) => x.type === eventType).offers;
+
     this._element = null;
   }
 
