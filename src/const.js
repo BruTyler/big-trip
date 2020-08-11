@@ -27,7 +27,6 @@ export const BuisnessRequirements = {
 
 export const DefaultValues = {
   POINT_ID: 0,
-  DAY_ID: 0,
 };
 
 export const SortType = {

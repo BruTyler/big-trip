@@ -3,6 +3,7 @@ import TripPathView from './view/trip-path.js';
 import TripCostView from './view/trip-cost.js';
 import TripTabsView from './view/trip-tabs.js';
 import EventFilterView from './view/event-filter.js';
+import EventAddButtonView from './view/event-add-button.js';
 import EventSorterView from './view/event-sorter.js';
 import EventEditorView from './view/event-editor.js';
 import EventDayView from './view/event-day.js';
@@ -32,6 +33,8 @@ renderTemplate(tripInfoElement, new TripCostView(tripEvents).getTemplate(), Rend
 const tripMenuElement = siteHeaderElement.querySelector(`.trip-controls`);
 renderTemplate(tripMenuElement, new TripTabsView().getTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(tripMenuElement, new EventFilterView().getTemplate(), RenderPosition.BEFOREEND);
+
+renderTemplate(tripMainElement, new EventAddButtonView().getTemplate(), RenderPosition.BEFOREEND);
 
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 renderTemplate(tripEventsElement, new EventSorterView().getTemplate(), RenderPosition.BEFOREEND);
