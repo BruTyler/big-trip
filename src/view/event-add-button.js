@@ -1,19 +1,18 @@
 import {createElement} from '../utils/render.js';
 
-export const createTripSummaryTemplate = () => {
+export const createEventAddButtonTemplate = () => {
   return (
-    `<section class="trip-main__trip-info  trip-info">
-    </section>`
+    `<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>`
   );
 };
 
-export default class TripSummary {
+export default class EventAddButton {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripSummaryTemplate();
+    return createEventAddButtonTemplate();
   }
 
   getElement() {

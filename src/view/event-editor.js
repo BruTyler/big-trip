@@ -2,12 +2,24 @@ import moment from 'moment';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext} from '../utils/trip.js';
+import {createElement} from '../utils/render.js';
+
+const BLANK_EVENT = {
+  id: DefaultValues.POINT_ID,
+  destination: {name: ``},
+  type: EventType.FLIGHT,
+  basePrice: ``,
+  offers: [],
+  startDate: new Date(),
+  finishDate: new Date(),
+  isFavorite: false,
+};
 
 const createEventTypesTemplate = (pointId, specificType) => {
   return Object.values(specificType)
     .map((type) => (
       `<div class="event__type-item">
-        <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+        <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
         <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${capitilizeFirstLetter(type)}</label>
       </div>`))
     .join(``);
@@ -105,19 +117,11 @@ const createRollupButtonTemplate = (pointId) => {
   </button>`;
 };
 
-export const createEventEditorTemplate = (eventItem = {}, destinations = [], tripOffers = []) => {
+const createEventEditorTemplate = (eventItem, destinations, availableOffers) => {
   const {
-    id = DefaultValues.POINT_ID,
-    destination = {name: ``},
-    type = EventType.FLIGHT,
-    basePrice = ``,
-    offers = [],
-    startDate = new Date(),
-    finishDate = new Date(),
-    isFavorite = false,
+    id, destination, type, basePrice, offers,
+    startDate, finishDate, isFavorite
   } = eventItem;
-
-  const availableOffers = tripOffers.find((x) => x.type === type).offers;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -188,3 +192,32 @@ export const createEventEditorTemplate = (eventItem = {}, destinations = [], tri
     </form>`
   );
 };
+
+export default class EventEditor {
+  constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
+    const {type: eventType} = eventItem;
+    this._eventItem = eventItem;
+    this._destinations = destinations;
+    this._availableOffers = tripOffers.length === 0
+      ? []
+      : tripOffers.find((x) => x.type === eventType).offers;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditorTemplate(this._eventItem, this._destinations, this._availableOffers);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
