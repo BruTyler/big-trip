@@ -8,6 +8,7 @@ import EventSorterView from './view/event-sorter.js';
 import EventEditorView from './view/event-editor.js';
 import EventDayView from './view/event-day.js';
 import EventPointView from './view/event-point.js';
+import NoPointsView from './view/no-points.js';
 import {generateEvent} from '../mocks/event.js';
 import {generateDestinations} from '../mocks/destinations.js';
 import {generateOffers} from '../mocks/offers.js';
@@ -21,7 +22,7 @@ const destinations = generateDestinations();
 const tripOffers = generateOffers();
 const tripEvents = new Array(TRIP_EVENT_COUNT).fill().map(() => generateEvent(destinations, tripOffers));
 
-const renderPoint = (dayContainer, tripEvent) => {
+const renderSinglePoint = (dayContainer, tripEvent) => {
   const pointContainer = dayContainer.querySelector(`.trip-events__list`);
 
   const eventPointComponent = new EventPointView(tripEvent);
@@ -35,20 +36,57 @@ const renderPoint = (dayContainer, tripEvent) => {
     pointContainer.replaceChild(eventPointComponent.getElement(), eventEditorComponent.getElement());
   };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      evt.preventDefault();
+      replaceFormToPoint();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
   eventPointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replacePointToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   eventEditorComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
     replaceFormToPoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
     evt.preventDefault();
     replaceFormToPoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   render(pointContainer, eventPointComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
+const renderChainPoints = (chainContainer, chainEvents) => {
+  if (chainEvents.length === 0) {
+    render(chainContainer, new NoPointsView().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
+
+  render(chainContainer, new EventSorterView().getElement(), RenderPosition.BEFOREEND);
+
+  const sortedTripEvents = chainEvents
+    .filter(getFilterRule(FilterType.EVERYTHING))
+    .sort(getSorterRule(SortType.EVENT));
+
+  const groupedEvents = splitEventsByDays(sortedTripEvents);
+
+  Object.keys(groupedEvents).forEach((shortDay, dayIndex) => {
+    const eventDay = new Date(shortDay);
+    const dayId = dayIndex + 1;
+    const EventDayComponent = new EventDayView(dayId, eventDay);
+    render(chainContainer, EventDayComponent.getElement(), RenderPosition.BEFOREEND);
+
+    groupedEvents[shortDay].forEach((tripEvent) => {
+      renderSinglePoint(EventDayComponent.getElement(), tripEvent);
+    });
+  });
 };
 
 const siteHeaderElement = document.querySelector(`.page-header`);
@@ -67,21 +105,4 @@ render(tripMenuElement, new EventFilterView().getElement(), RenderPosition.BEFOR
 render(tripMainElement, new EventAddButtonView().getElement(), RenderPosition.BEFOREEND);
 
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
-render(tripEventsElement, new EventSorterView().getElement(), RenderPosition.BEFOREEND);
-
-const sortedTripEvents = tripEvents
-  .filter(getFilterRule(FilterType.EVERYTHING))
-  .sort(getSorterRule(SortType.EVENT));
-
-const groupedEvents = splitEventsByDays(sortedTripEvents);
-
-Object.keys(groupedEvents).forEach((shortDay, dayIndex) => {
-  const eventDay = new Date(shortDay);
-  const dayId = dayIndex + 1;
-  const EventDayComponent = new EventDayView(dayId, eventDay);
-  render(tripEventsElement, EventDayComponent.getElement(), RenderPosition.BEFOREEND);
-
-  groupedEvents[shortDay].forEach((tripEvent) => {
-    renderPoint(EventDayComponent.getElement(), tripEvent);
-  });
-});
+renderChainPoints(tripEventsElement, tripEvents);
