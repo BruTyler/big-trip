@@ -1,8 +1,8 @@
 import moment from 'moment';
+import AbstractView from './abstract.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext} from '../utils/trip.js';
-import {createElement} from '../utils/render.js';
 
 const BLANK_EVENT = {
   id: DefaultValues.POINT_ID,
@@ -193,31 +193,19 @@ const createEventEditorTemplate = (eventItem, destinations, availableOffers) => 
   );
 };
 
-export default class EventEditor {
+export default class EventEditor extends AbstractView {
   constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
+    super();
+
     const {type: eventType} = eventItem;
     this._eventItem = eventItem;
     this._destinations = destinations;
     this._availableOffers = tripOffers.length === 0
       ? []
       : tripOffers.find((x) => x.type === eventType).offers;
-
-    this._element = null;
   }
 
   getTemplate() {
     return createEventEditorTemplate(this._eventItem, this._destinations, this._availableOffers);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

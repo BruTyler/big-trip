@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render.js';
+import AbstractView from './abstract.js';
 
 const createEventFilterTemplate = () => {
   return (
@@ -23,24 +23,8 @@ const createEventFilterTemplate = () => {
   );
 };
 
-export default class EventFilter {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventFilter extends AbstractView {
   getTemplate() {
     return createEventFilterTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
