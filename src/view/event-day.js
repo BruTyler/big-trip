@@ -38,4 +38,8 @@ export default class EventDay extends AbstractView {
   getTemplate() {
     return createEventDayTemplate(this._dayId, this._eventDate);
   }
+
+  getPointContainer() {
+    return this.getElement().querySelector(`.trip-events__list`);
+  }
 }

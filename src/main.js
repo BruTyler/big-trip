@@ -22,9 +22,7 @@ const destinations = generateDestinations();
 const tripOffers = generateOffers();
 const tripEvents = new Array(TRIP_EVENT_COUNT).fill().map(() => generateEvent(destinations, tripOffers));
 
-const renderSinglePoint = (dayContainer, tripEvent) => {
-  const pointContainer = dayContainer.querySelector(`.trip-events__list`);
-
+const renderSinglePoint = (pointContainer, tripEvent) => {
   const eventPointComponent = new EventPointView(tripEvent);
   const eventEditorComponent = new EventEditorView(tripEvent, destinations, tripOffers);
 
@@ -44,18 +42,17 @@ const renderSinglePoint = (dayContainer, tripEvent) => {
     }
   };
 
-  eventPointComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventPointComponent.setEditClickHandler(() => {
     replacePointToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditorComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventEditorComponent.setCancelClickHandler(() => {
     replaceFormToPoint();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditorComponent.getElement().addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditorComponent.setFormSubmitHandler(() => {
     replaceFormToPoint();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
@@ -84,7 +81,8 @@ const renderChainPoints = (chainContainer, chainEvents) => {
     render(chainContainer, EventDayComponent, RenderPosition.BEFOREEND);
 
     groupedEvents[shortDay].forEach((tripEvent) => {
-      renderSinglePoint(EventDayComponent.getElement(), tripEvent);
+      const pointContainer = EventDayComponent.getPointContainer();
+      renderSinglePoint(pointContainer, tripEvent);
     });
   });
 };

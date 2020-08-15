@@ -203,9 +203,32 @@ export default class EventEditor extends AbstractView {
     this._availableOffers = tripOffers.length === 0
       ? []
       : tripOffers.find((x) => x.type === eventType).offers;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._cancelClickHandler = this._cancelClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventEditorTemplate(this._eventItem, this._destinations, this._availableOffers);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  _cancelClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.cancelClick();
+  }
+
+  setCancelClickHandler(callback) {
+    this._callback.cancelClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelClickHandler);
   }
 }
