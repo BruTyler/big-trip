@@ -1,8 +1,8 @@
 import moment from 'moment';
+import AbstractView from './abstract.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext} from '../utils/trip.js';
-import {createElement} from '../utils/render.js';
 
 const BLANK_EVENT = {
   id: DefaultValues.POINT_ID,
@@ -193,8 +193,10 @@ const createEventEditorTemplate = (eventItem, destinations, availableOffers) => 
   );
 };
 
-export default class EventEditor {
+export default class EventEditor extends AbstractView {
   constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
+    super();
+
     const {type: eventType} = eventItem;
     this._eventItem = eventItem;
     this._destinations = destinations;
@@ -202,22 +204,31 @@ export default class EventEditor {
       ? []
       : tripOffers.find((x) => x.type === eventType).offers;
 
-    this._element = null;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._cancelClickHandler = this._cancelClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventEditorTemplate(this._eventItem, this._destinations, this._availableOffers);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  _cancelClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.cancelClick();
+  }
+
+  setCancelClickHandler(callback) {
+    this._callback.cancelClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._cancelClickHandler);
   }
 }

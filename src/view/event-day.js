@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {createElement} from '../utils/render.js';
+import AbstractView from './abstract.js';
 
 const createDayTitleTemplate = (dayId, eventDate) => {
   if (dayId === null) {
@@ -27,26 +27,19 @@ const createEventDayTemplate = (dayId, eventDate) => {
   );
 };
 
-export default class EventDay {
+export default class EventDay extends AbstractView {
   constructor(dayId = null, eventDate = null) {
+    super();
+
     this._dayId = dayId;
     this._eventDate = eventDate;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventDayTemplate(this._dayId, this._eventDate);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  getPointContainer() {
+    return this.getElement().querySelector(`.trip-events__list`);
   }
 }

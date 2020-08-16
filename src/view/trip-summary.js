@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render.js';
+import AbstractView from './abstract.js';
 
 export const createTripSummaryTemplate = () => {
   return (
@@ -7,24 +7,8 @@ export const createTripSummaryTemplate = () => {
   );
 };
 
-export default class TripSummary {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripSummary extends AbstractView {
   getTemplate() {
     return createTripSummaryTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,4 @@
-import {createElement} from '../utils/render.js';
+import AbstractView from './abstract.js';
 
 const createEventSorterTemplate = () => {
   return (
@@ -35,24 +35,8 @@ const createEventSorterTemplate = () => {
   );
 };
 
-export default class EventSorter {
-  constructor() {
-    this._element = null;
-  }
-
+export default class EventSorter extends AbstractView {
   getTemplate() {
     return createEventSorterTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

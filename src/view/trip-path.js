@@ -1,8 +1,8 @@
 import {excludeRepeatingInSequence} from '../utils/common.js';
 import moment from 'moment';
+import AbstractView from './abstract.js';
 import {getSorterRule} from '../utils/trip.js';
 import {SortType} from '../const.js';
-import {createElement} from '../utils/render.js';
 
 const createDatesTemplate = (sortedEvents) => {
   const tripStartDate = sortedEvents[0].startDate;
@@ -63,25 +63,14 @@ const createTripPathTemplate = (tripEvents) => {
   );
 };
 
-export default class TripPath {
+export default class TripPath extends AbstractView {
   constructor(tripEvents) {
+    super();
+
     this._tripEvents = tripEvents;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripPathTemplate(this._tripEvents);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
