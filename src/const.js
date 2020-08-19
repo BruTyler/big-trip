@@ -25,14 +25,10 @@ export const BuisnessRequirements = {
   MAX_VISIBLE_OFFERS_PER_POINT: 3,
 };
 
-export const DefaultValues = {
-  POINT_ID: 0,
-};
-
 export const SortType = {
   EVENT: `event`,
-  PRICE: `price`,
   TIME: `time`,
+  PRICE: `price`,
 };
 
 export const FilterType = {
@@ -44,4 +40,9 @@ export const FilterType = {
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
+};
+
+export const DefaultValues = {
+  POINT_ID: 0,
+  SORT_TYPE: SortType.EVENT,
 };
