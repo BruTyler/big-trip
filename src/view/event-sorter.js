@@ -1,14 +1,20 @@
 import AbstractView from './abstract.js';
 import {capitilizeFirstLetter} from '../utils/common.js';
-import {SortType, DefaultValues} from '../const.js';
+import {SortType} from '../const.js';
 
 const createEventSorterTemplate = (selectedSortType) => {
   const sortItemsTemplate = Object
     .values(SortType)
     .map((sortItem) =>
       `<div class="trip-sort__item  trip-sort__item--${sortItem}">
-        <input id="sort-${sortItem}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortItem}" ${selectedSortType === sortItem ? `checked` : ``}>
-        <label class="trip-sort__btn" for="sort-${sortItem}">${capitilizeFirstLetter(sortItem)}</label>
+        <input type="radio" name="trip-sort" class="trip-sort__input  visually-hidden" 
+          id="sort-${sortItem}" 
+          value="${sortItem}" 
+          ${selectedSortType === sortItem ? `checked` : ``}
+        >
+        <label class="trip-sort__btn" for="sort-${sortItem}">
+          ${capitilizeFirstLetter(sortItem)}
+        </label>
       </div>`)
     .join(`\n`);
 
@@ -22,13 +28,28 @@ const createEventSorterTemplate = (selectedSortType) => {
 };
 
 export default class EventSorter extends AbstractView {
-  constructor(selectedSortType = DefaultValues.SORT_TYPE) {
+  constructor(initSortType) {
     super();
 
-    this._selectedSortType = selectedSortType;
+    this._initSortType = initSortType;
+
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
-    return createEventSorterTemplate(this._selectedSortType);
+    return createEventSorterTemplate(this._initSortType);
+  }
+
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `INPUT`) {
+      return;
+    }
+
+    this._callback.sortTypeChange(evt.target.value);
+  }
+
+  setSortTypeChangeHandler(callback) {
+    this._callback.sortTypeChange = callback;
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 }

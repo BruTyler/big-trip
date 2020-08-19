@@ -1,23 +1,23 @@
 import moment from 'moment';
 import AbstractView from './abstract.js';
 
-const createDayTitleTemplate = (dayId, eventDate) => {
-  if (dayId === null) {
+const createDayTitleTemplate = (dayId, groupedDate) => {
+  if (groupedDate === null) {
     return ``;
   }
 
   return (
     `<span class="day__counter">${dayId}</span>
-    <time class="day__date" datetime="${moment(eventDate).format(`YYYY-MM-DD`)}">${moment(eventDate).format(`MMM DD`)}</time>`
+    <time class="day__date" datetime="${moment(groupedDate).format(`YYYY-MM-DD`)}">${moment(groupedDate).format(`MMM DD`)}</time>`
   );
 };
 
-const createEventDayTemplate = (dayId, eventDate) => {
+const createEventDayTemplate = (dayId, groupedDate) => {
   return (
     `<ul class="trip-days">
       <li class="trip-days__item  day">
         <div class="day__info">
-          ${createDayTitleTemplate(dayId, eventDate)}
+          ${createDayTitleTemplate(dayId, groupedDate)}
         </div>
 
         <ul class="trip-events__list">
@@ -28,15 +28,15 @@ const createEventDayTemplate = (dayId, eventDate) => {
 };
 
 export default class EventDay extends AbstractView {
-  constructor(dayId = null, eventDate = null) {
+  constructor(dayId, groupedDate = null) {
     super();
 
     this._dayId = dayId;
-    this._eventDate = eventDate;
+    this._groupedDate = groupedDate;
   }
 
   getTemplate() {
-    return createEventDayTemplate(this._dayId, this._eventDate);
+    return createEventDayTemplate(this._dayId, this._groupedDate);
   }
 
   getPointContainer() {
