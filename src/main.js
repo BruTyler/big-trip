@@ -5,9 +5,9 @@ import TripTabsView from './view/trip-tabs.js';
 import EventFilterView from './view/event-filter.js';
 import EventAddButtonView from './view/event-add-button.js';
 import TripPresenter from './presenter/trip.js';
-import {generateEvent} from '../mocks/event.js';
-import {generateDestinations} from '../mocks/destinations.js';
-import {generateOffers} from '../mocks/offers.js';
+import {generateEvent} from './mocks/event.js';
+import {generateDestinations} from './mocks/destinations.js';
+import {generateOffers} from './mocks/offers.js';
 import {render} from './utils/render.js';
 import {RenderPosition} from './const.js';
 

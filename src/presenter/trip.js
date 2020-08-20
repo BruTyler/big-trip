@@ -3,28 +3,45 @@ import EventEditorView from '../view/event-editor.js';
 import EventDayView from '../view/event-day.js';
 import EventPointView from '../view/event-point.js';
 import NoPointsView from '../view/no-points.js';
-import {getSorterRule, splitEventsByDays, getFilterRule} from '../utils/trip.js';
-import {SortType, FilterType, RenderPosition} from '../const.js';
-import {render, replace} from '../utils/render.js';
+import {getSorterRule, getFilterRule, groupEvents, convertToNullableDate} from '../utils/trip.js';
+import {FilterType, RenderPosition, DefaultValues} from '../const.js';
+import {render, replace, remove} from '../utils/render.js';
 
 export default class Trip {
   constructor(tripEventsContainer) {
     this._tripEventsContainer = tripEventsContainer;
+    this._currenSortType = DefaultValues.SORT_TYPE;
+    this._tripDays = [];
 
-    this._eventSorterComponent = new EventSorterView();
+    this._eventSorterComponent = new EventSorterView(this._currenSortType);
     this._noPointsComponent = new NoPointsView();
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(tripEvents, destinations, tripOffers) {
-    this._tripEvents = tripEvents.slice();
+    this._tripEvents = tripEvents.filter(getFilterRule(FilterType.EVERYTHING));
     this._destinations = destinations;
     this._tripOffers = tripOffers;
 
     this._renderTripBoard();
   }
 
+  _handleSortTypeChange(sortType) {
+    if (this._currenSortType === sortType) {
+      return;
+    }
+
+    this._clearChainPoints();
+
+    this._currenSortType = sortType;
+    const sortedTripEvents = this._tripEvents.sort(getSorterRule(this._currenSortType));
+    this._renderChainPoints(sortedTripEvents);
+  }
+
   _renderSort() {
     render(this._tripEventsContainer, this._eventSorterComponent, RenderPosition.BEFOREEND);
+    this._eventSorterComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderNoPoints() {
@@ -70,12 +87,13 @@ export default class Trip {
   }
 
   _renderChainPoints(sortedTripEvents) {
-    const groupedEvents = splitEventsByDays(sortedTripEvents);
+    const groupedEvents = groupEvents(this._currenSortType, sortedTripEvents);
 
     Object.keys(groupedEvents).forEach((shortDay, dayIndex) => {
-      const eventDay = new Date(shortDay);
+      const groupedDate = convertToNullableDate(shortDay);
       const dayId = dayIndex + 1;
-      const EventDayComponent = new EventDayView(dayId, eventDay);
+      const EventDayComponent = new EventDayView(dayId, groupedDate);
+      this._tripDays.push(EventDayComponent);
       render(this._tripEventsContainer, EventDayComponent, RenderPosition.BEFOREEND);
 
       groupedEvents[shortDay].forEach((tripEvent) => {
@@ -83,6 +101,12 @@ export default class Trip {
         this._renderSinglePoint(pointContainer, tripEvent);
       });
     });
+
+  }
+
+  _clearChainPoints() {
+    this._tripDays.forEach((day) => remove(day));
+    this._tripDays = [];
   }
 
   _renderTripBoard() {
@@ -93,10 +117,7 @@ export default class Trip {
 
     this._renderSort();
 
-    const sortedTripEvents = this._tripEvents
-      .filter(getFilterRule(FilterType.EVERYTHING))
-      .sort(getSorterRule(SortType.EVENT));
-
+    const sortedTripEvents = this._tripEvents.sort(getSorterRule(this._currenSortType));
     this._renderChainPoints(sortedTripEvents);
   }
 }

@@ -55,3 +55,26 @@ export const splitEventsByDays = (sortedEvents) => {
 
   return groupedEvents;
 };
+
+export const isValidShortDay = (shortDay) => {
+  return shortDay.match(/^\d{4}-\d{2}-\d{2}$/) && moment(shortDay).isValid();
+};
+
+export const convertToNullableDate = (shortDay) => {
+  return isValidShortDay(shortDay) ? new Date(shortDay) : null;
+};
+
+export const groupEvents = (sortType, sortedTripEvents) => {
+  let groupedEvents = {};
+
+  switch (sortType) {
+    case SortType.EVENT:
+      groupedEvents = splitEventsByDays(sortedTripEvents);
+      break;
+    default:
+      groupedEvents = {emptyDayWrapper: sortedTripEvents};
+      break;
+  }
+
+  return groupedEvents;
+};
