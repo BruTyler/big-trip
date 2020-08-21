@@ -67,12 +67,14 @@ export default class Point {
 
   _replacePointToEditor() {
     replace(this._editorComponent, this._pointComponent);
+    document.addEventListener(`keydown`, this._handleEscKeyDown);
     this._changeMode();
     this._mode = Mode.EDITING;
   }
 
   _replaceEditorToPoint() {
     replace(this._pointComponent, this._editorComponent);
+    document.removeEventListener(`keydown`, this._handleEscKeyDown);
     this._mode = Mode.DEFAULT;
   }
 
@@ -87,12 +89,10 @@ export default class Point {
 
   _handleEditClick() {
     this._replacePointToEditor();
-    document.addEventListener(`keydown`, this._handleEscKeyDown);
   }
 
   _handleCancelClick() {
     this._replaceEditorToPoint();
-    document.removeEventListener(`keydown`, this._handleEscKeyDown);
   }
 
   _handleFavoriteClick() {
@@ -103,6 +103,5 @@ export default class Point {
 
   _handleFormSubmit() {
     this._replaceEditorToPoint();
-    document.removeEventListener(`keydown`, this._handleEscKeyDown);
   }
 }
