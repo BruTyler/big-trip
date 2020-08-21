@@ -1,8 +1,8 @@
 import moment from 'moment';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
-import {pickEventPretext} from '../utils/trip.js';
+import {pickEventPretext, defineDestination, defineAvailableOffers} from '../utils/trip.js';
 
 const BLANK_EVENT = {
   id: DefaultValues.POINT_ID,
@@ -12,15 +12,15 @@ const BLANK_EVENT = {
   offers: [],
   startDate: new Date(),
   finishDate: new Date(),
-  isFavorite: false,
+  isFavorite: false
 };
 
-const createEventTypesTemplate = (pointId, specificType) => {
-  return Object.values(specificType)
+const createEventTypesTemplate = (pointId, selectedEventType) => {
+  return Object.values(selectedEventType)
     .map((type) => (
       `<div class="event__type-item">
         <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}">${capitilizeFirstLetter(type)}</label>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${pointId}" data-type="${type}">${capitilizeFirstLetter(type)}</label>
       </div>`))
     .join(``);
 };
@@ -70,7 +70,7 @@ const createOfferItemTemplate = (pointId, offer, isChecked) => {
 };
 
 const createConcreteDestinationTemplate = (pointId, destination) => {
-  if (destination === null || !destination.name || pointId !== DefaultValues.POINT_ID) {
+  if (destination === null || !destination.description) {
     return ``;
   }
 
@@ -117,11 +117,13 @@ const createRollupButtonTemplate = (pointId) => {
   </button>`;
 };
 
-const createEventEditorTemplate = (eventItem, destinations, availableOffers) => {
+const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
   const {
-    id, destination, type, basePrice, offers,
+    id, destination, type, basePrice, offers: selectedOffers,
     startDate, finishDate, isFavorite
   } = eventItem;
+
+  const availableOffers = defineAvailableOffers(type, tripOffers);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -183,7 +185,7 @@ const createEventEditorTemplate = (eventItem, destinations, availableOffers) => 
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
-          ${createAvailableOffersTemplate(id, availableOffers, offers)}
+          ${createAvailableOffersTemplate(id, availableOffers, selectedOffers)}
         </section>
         <section class="event__section  event__section--destination">
           ${createConcreteDestinationTemplate(id, destination)}
@@ -193,28 +195,94 @@ const createEventEditorTemplate = (eventItem, destinations, availableOffers) => 
   );
 };
 
-export default class EventEditor extends AbstractView {
+export default class EventEditor extends SmartView {
   constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
     super();
 
-    const {type: eventType} = eventItem;
-    this._eventItem = eventItem;
+    this._item = eventItem;
+    this._sourceItem = eventItem;
     this._destinations = destinations;
-    this._availableOffers = tripOffers.length === 0
-      ? []
-      : tripOffers.find((x) => x.type === eventType).offers;
+    this._tripOffers = tripOffers;
 
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._typeClickHandler = this._typeClickHandler.bind(this);
+    this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._cancelClickHandler = this._cancelClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset() {
+    this.updateData(this._sourceItem);
   }
 
   getTemplate() {
-    return createEventEditorTemplate(this._eventItem, this._destinations, this._availableOffers);
+    return createEventEditorTemplate(this._item, this._destinations, this._tripOffers);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+    this.setCancelClickHandler(this._callback.cancelClick);
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, this._priceInputHandler);
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`click`, this._typeClickHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`input`, this._destinationInputHandler);
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    const basePrice = evt.target.value;
+
+    this.updateData({
+      basePrice
+    }, true);
+  }
+
+  _typeClickHandler(evt) {
+    evt.preventDefault();
+    const selectedEventType = evt.target.dataset.type;
+
+    if (selectedEventType === this._item.type) {
+      this.getElement().querySelector(`.event__type-btn`).click();
+      return;
+    }
+
+    this.updateData({
+      type: selectedEventType
+    });
+  }
+
+  _destinationInputHandler(evt) {
+    evt.preventDefault();
+    const selectedCity = evt.target.value;
+
+    if (selectedCity === this._item.destination.name) {
+      return;
+    }
+
+    const updatedProperty = defineDestination(this._destinations, selectedCity);
+    const isRenderActual = updatedProperty.description === this._item.destination.description;
+
+    this.updateData({
+      destination: updatedProperty
+    }, isRenderActual);
   }
 
   _cancelClickHandler(evt) {
     evt.preventDefault();
+    this.reset();
     this._callback.cancelClick();
   }
 
@@ -225,6 +293,7 @@ export default class EventEditor extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    this._sourceItem = this.item;
     this._callback.formSubmit();
   }
 

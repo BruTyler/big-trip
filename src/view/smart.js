@@ -4,15 +4,15 @@ import {extend} from '../utils/common.js';
 export default class Smart extends AbstractView {
   constructor() {
     super();
-    this._data = {};
+    this._item = Object.create(null);
   }
 
-  updateData(update, justDataUpdating) {
-    if (!update) {
+  updateData(updatedData, justDataUpdating) {
+    if (!updatedData) {
       return;
     }
 
-    this._data = extend(this._data, update);
+    this._item = extend(this._item, updatedData);
 
     if (justDataUpdating) {
       return;

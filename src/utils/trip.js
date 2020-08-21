@@ -75,3 +75,21 @@ export const groupEvents = (sortType, sortedTripEvents) => {
 
   return groupedEvents;
 };
+
+export const defineDestination = (destinations, selectedCity) => {
+  const destination = destinations.find((d) => d.name === selectedCity);
+
+  if (destination) {
+    return destination;
+  }
+
+  return {name: selectedCity};
+};
+
+export const defineAvailableOffers = (eventType, tripOffers) => {
+  if (tripOffers.length === 0) {
+    return [];
+  }
+
+  return tripOffers.find((x) => x.type === eventType).offers;
+};

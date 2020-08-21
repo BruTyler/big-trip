@@ -63,6 +63,7 @@ export default class Point {
   _handleEscKeyDown(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._editorComponent.reset();
       this._replaceEditorToPoint();
       document.removeEventListener(`keydown`, this._handleEscKeyDown);
     }
