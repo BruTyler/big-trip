@@ -5,6 +5,7 @@ import NoPointsView from '../view/no-points.js';
 import {getSorterRule, getFilterRule, groupEvents, convertToNullableDate} from '../utils/trip.js';
 import {FilterType, RenderPosition, DefaultValues} from '../const.js';
 import {render, remove} from '../utils/render.js';
+import {updateItemById} from '../utils/common.js';
 
 export default class Trip {
   constructor(tripEventsContainer) {
@@ -16,6 +17,7 @@ export default class Trip {
     this._eventSorterComponent = new EventSorterView(this._currenSortType);
     this._noPointsComponent = new NoPointsView();
 
+    this._handleTripEventChange = this._handleTripEventChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -25,6 +27,11 @@ export default class Trip {
     this._tripOffers = tripOffers;
 
     this._renderTripBoard();
+  }
+
+  _handleTripEventChange(updatedTripEvent) {
+    this._tripEvents = updateItemById(this._tripEvents, updatedTripEvent);
+    this._pointStorage[updatedTripEvent.id].init(updatedTripEvent, this._destinations, this._tripOffers);
   }
 
   _handleSortTypeChange(sortType) {
@@ -49,7 +56,7 @@ export default class Trip {
   }
 
   _renderSinglePoint(pointContainer, tripEvent) {
-    const point = new PointPresenter(pointContainer);
+    const point = new PointPresenter(pointContainer, this._handleTripEventChange);
     point.init(tripEvent, this._destinations, this._tripOffers);
     this._pointStorage[tripEvent.id] = point;
   }
@@ -60,12 +67,12 @@ export default class Trip {
     Object.keys(groupedEvents).forEach((shortDay, groupIndex) => {
       const groupedDate = convertToNullableDate(shortDay);
       const dayId = groupIndex + 1;
-      const EventDayComponent = new EventDayView(dayId, groupedDate);
-      this._dayStorage[dayId] = EventDayComponent;
-      render(this._tripEventsContainer, EventDayComponent, RenderPosition.BEFOREEND);
+      const eventDayComponent = new EventDayView(dayId, groupedDate);
+      this._dayStorage[dayId] = eventDayComponent;
+      render(this._tripEventsContainer, eventDayComponent, RenderPosition.BEFOREEND);
 
       groupedEvents[shortDay].forEach((tripEvent) => {
-        const pointContainer = EventDayComponent.getPointContainer();
+        const pointContainer = eventDayComponent.getPointContainer();
         this._renderSinglePoint(pointContainer, tripEvent);
       });
     });
