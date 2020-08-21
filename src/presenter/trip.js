@@ -1,17 +1,17 @@
+import PointPresenter from './point.js';
 import EventSorterView from '../view/event-sorter.js';
-import EventEditorView from '../view/event-editor.js';
 import EventDayView from '../view/event-day.js';
-import EventPointView from '../view/event-point.js';
 import NoPointsView from '../view/no-points.js';
 import {getSorterRule, getFilterRule, groupEvents, convertToNullableDate} from '../utils/trip.js';
 import {FilterType, RenderPosition, DefaultValues} from '../const.js';
-import {render, replace, remove} from '../utils/render.js';
+import {render, remove} from '../utils/render.js';
 
 export default class Trip {
   constructor(tripEventsContainer) {
     this._tripEventsContainer = tripEventsContainer;
     this._currenSortType = DefaultValues.SORT_TYPE;
-    this._tripDays = [];
+    this._dayStorage = Object.create(null);
+    this._pointStorage = Object.create(null);
 
     this._eventSorterComponent = new EventSorterView(this._currenSortType);
     this._noPointsComponent = new NoPointsView();
@@ -49,51 +49,19 @@ export default class Trip {
   }
 
   _renderSinglePoint(pointContainer, tripEvent) {
-    const eventPointComponent = new EventPointView(tripEvent);
-    const eventEditorComponent = new EventEditorView(tripEvent, this._destinations, this._tripOffers);
-
-    const replacePointToForm = () => {
-      replace(eventEditorComponent, eventPointComponent);
-    };
-
-    const replaceFormToPoint = () => {
-      replace(eventPointComponent, eventEditorComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToPoint();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventPointComponent.setEditClickHandler(() => {
-      replacePointToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditorComponent.setCancelClickHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditorComponent.setFormSubmitHandler(() => {
-      replaceFormToPoint();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(pointContainer, eventPointComponent, RenderPosition.BEFOREEND);
+    const point = new PointPresenter(pointContainer);
+    point.init(tripEvent, this._destinations, this._tripOffers);
+    this._pointStorage[tripEvent.id] = point;
   }
 
   _renderChainPoints(sortedTripEvents) {
     const groupedEvents = groupEvents(this._currenSortType, sortedTripEvents);
 
-    Object.keys(groupedEvents).forEach((shortDay, dayIndex) => {
+    Object.keys(groupedEvents).forEach((shortDay, groupIndex) => {
       const groupedDate = convertToNullableDate(shortDay);
-      const dayId = dayIndex + 1;
+      const dayId = groupIndex + 1;
       const EventDayComponent = new EventDayView(dayId, groupedDate);
-      this._tripDays.push(EventDayComponent);
+      this._dayStorage[dayId] = EventDayComponent;
       render(this._tripEventsContainer, EventDayComponent, RenderPosition.BEFOREEND);
 
       groupedEvents[shortDay].forEach((tripEvent) => {
@@ -101,12 +69,16 @@ export default class Trip {
         this._renderSinglePoint(pointContainer, tripEvent);
       });
     });
-
   }
 
   _clearChainPoints() {
-    this._tripDays.forEach((day) => remove(day));
-    this._tripDays = [];
+    this._pointStorage = Object.create(null);
+
+    Object
+      .values(this._dayStorage)
+      .forEach((day) => remove(day));
+
+    this._dayStorage = Object.create(null);
   }
 
   _renderTripBoard() {
