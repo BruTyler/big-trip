@@ -10,15 +10,15 @@ export const pickEventPretext = (eventType) => {
 export const getSorterRule = (sortType) => {
   switch (sortType) {
     case SortType.TIME:
-      return (a, b) => {
-        const durationA = moment(a.finishDate).diff(moment(a.startDate));
-        const durationB = moment(b.finishDate).diff(moment(b.startDate));
+      return (eventA, eventB) => {
+        const durationA = moment(eventA.finishDate).diff(moment(eventA.startDate));
+        const durationB = moment(eventB.finishDate).diff(moment(eventB.startDate));
         return durationB - durationA;
       };
     case SortType.PRICE:
-      return (a, b) => getTotalEventPrice(b) - getTotalEventPrice(a);
+      return (eventA, eventB) => getTotalEventPrice(eventB) - getTotalEventPrice(eventA);
     default:
-      return (a, b) => moment(a.startDate) - moment(b.startDate);
+      return (eventA, eventB) => moment(eventA.startDate) - moment(eventB.startDate);
   }
 };
 
@@ -41,7 +41,7 @@ export const getTotalEventPrice = (event) => {
 };
 
 export const splitEventsByDays = (sortedEvents) => {
-  const groupedEvents = {};
+  const groupedEvents = Object.create(null);
 
   sortedEvents.forEach((event) => {
     const shortDay = moment(event.startDate).format(`YYYY-MM-DD`);
@@ -56,16 +56,13 @@ export const splitEventsByDays = (sortedEvents) => {
   return groupedEvents;
 };
 
-export const isValidShortDay = (shortDay) => {
-  return shortDay.match(/^\d{4}-\d{2}-\d{2}$/) && moment(shortDay).isValid();
-};
-
 export const convertToNullableDate = (shortDay) => {
-  return isValidShortDay(shortDay) ? new Date(shortDay) : null;
+  const parsedTime = Date.parse(shortDay);
+  return isNaN(parsedTime) ? null : new Date(parsedTime);
 };
 
 export const groupEvents = (sortType, sortedTripEvents) => {
-  let groupedEvents = {};
+  let groupedEvents = Object.create(null);
 
   switch (sortType) {
     case SortType.EVENT:
