@@ -4,13 +4,20 @@ import {RenderPosition} from '../const.js';
 import {render, replace, remove} from '../utils/render.js';
 import {extend} from '../utils/common.js';
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class Point {
-  constructor(pointContainer, changeData) {
+  constructor(pointContainer, changeData, changeMode) {
     this._pointContainer = pointContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._pointComponent = null;
     this._editorComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
     this._replacePointToEditor = this._replacePointToEditor.bind(this);
@@ -40,11 +47,11 @@ export default class Point {
       return;
     }
 
-    if (this._pointContainer.contains(prevPointComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._pointContainer.contains(prevEditorComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._editorComponent, prevEditorComponent);
     }
 
@@ -52,12 +59,21 @@ export default class Point {
     remove(prevEditorComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditorToPoint();
+    }
+  }
+
   _replacePointToEditor() {
     replace(this._editorComponent, this._pointComponent);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceEditorToPoint() {
     replace(this._pointComponent, this._editorComponent);
+    this._mode = Mode.DEFAULT;
   }
 
   _handleEscKeyDown(evt) {

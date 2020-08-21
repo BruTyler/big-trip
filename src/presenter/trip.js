@@ -17,6 +17,7 @@ export default class Trip {
     this._eventSorterComponent = new EventSorterView(this._currenSortType);
     this._noPointsComponent = new NoPointsView();
 
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleTripEventChange = this._handleTripEventChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
@@ -27,6 +28,12 @@ export default class Trip {
     this._tripOffers = tripOffers;
 
     this._renderTripBoard();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._pointStorage)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _handleTripEventChange(updatedTripEvent) {
@@ -56,7 +63,7 @@ export default class Trip {
   }
 
   _renderSinglePoint(pointContainer, tripEvent) {
-    const point = new PointPresenter(pointContainer, this._handleTripEventChange);
+    const point = new PointPresenter(pointContainer, this._handleTripEventChange, this._handleModeChange);
     point.init(tripEvent, this._destinations, this._tripOffers);
     this._pointStorage[tripEvent.id] = point;
   }
