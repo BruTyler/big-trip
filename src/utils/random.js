@@ -29,9 +29,11 @@ export const pickRandomElements = (elements, minElementCount, maxElementCount) =
 
   return elements
     .slice()
-    .sort(() => 0.5 - Math.random())
+    .sort(getRandomSorterRule)
     .slice(0, elementsCount);
 };
+
+export const getRandomSorterRule = () => 0.5 - Math.random();
 
 export const pickRandomDate = (maxMinuteOffset, startDate = null) => {
   const millisecOffset = 1000 * 60 * maxMinuteOffset;

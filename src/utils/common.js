@@ -47,3 +47,29 @@ export const humanizeDuration = (finishDate, startDate) => {
 
   return readableDurations.join(` `);
 };
+
+export const extend = (objectA, objectB) => {
+  return Object.assign({}, objectA, objectB);
+};
+
+export const updateItemById = (items, updatedItem) => {
+  const index = items.findIndex((item) => item.id === updatedItem.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    updatedItem,
+    ...items.slice(index + 1)
+  ];
+};
+
+export const removeItemById = (items, updatedItem) => {
+  if (items.length === 0) {
+    return items;
+  }
+
+  return items.filter((item) => item.id !== updatedItem.id);
+};
