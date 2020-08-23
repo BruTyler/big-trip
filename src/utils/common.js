@@ -22,10 +22,10 @@ const addLeadZero = (digit) => {
     : digit;
 };
 
-export const humanizeDuration = (finishDate, startDate) => {
-  const startMoment = moment(finishDate)
-    .subtract(finishDate.getSeconds(), `seconds`)
-    .subtract(finishDate.getMilliseconds(), `milliseconds`);
+export const humanizeDuration = (endDate, startDate) => {
+  const startMoment = moment(endDate)
+    .subtract(endDate.getSeconds(), `seconds`)
+    .subtract(endDate.getMilliseconds(), `milliseconds`);
   const finishMoment = moment(startDate)
     .subtract(startDate.getSeconds(), `seconds`)
     .subtract(startDate.getMilliseconds(), `milliseconds`);

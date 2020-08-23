@@ -17,7 +17,7 @@ export const generateEvent = (availableDestinations, availableOffers) => {
     basePrice: generateRandomInt(2, 50) * 10,
     offers: pickRandomElements(filteredOffers, 0, filteredOffers.length - 1),
     startDate,
-    finishDate: pickRandomDate(maxDurationEventMinutes, startDate),
+    endDate: pickRandomDate(maxDurationEventMinutes, startDate),
     isFavorite: Boolean(generateRandomInt(0, 1)),
   };
 };
