@@ -6,9 +6,9 @@ import {SortType} from '../const.js';
 
 const createDatesTemplate = (sortedEvents) => {
   const tripStartDate = sortedEvents[0].startDate;
-  const tripFinishDate = sortedEvents[sortedEvents.length - 1].finishDate;
-  const isSameDay = moment(tripStartDate).isSame(tripFinishDate, `day`);
-  const isSameMonth = moment(tripStartDate).isSame(tripFinishDate, `month`);
+  const tripEndDate = sortedEvents[sortedEvents.length - 1].endDate;
+  const isSameDay = moment(tripStartDate).isSame(tripEndDate, `day`);
+  const isSameMonth = moment(tripStartDate).isSame(tripEndDate, `month`);
 
   let summaryDates = ``;
   const firstHumanizeDate = moment(tripStartDate).format(`MMM DD`);
@@ -16,9 +16,9 @@ const createDatesTemplate = (sortedEvents) => {
   if (isSameDay) {
     summaryDates = firstHumanizeDate;
   } else if (isSameMonth) {
-    summaryDates = `${firstHumanizeDate}&nbsp;—&nbsp;${moment(tripFinishDate).format(`DD`)}`;
+    summaryDates = `${firstHumanizeDate}&nbsp;—&nbsp;${moment(tripEndDate).format(`DD`)}`;
   } else {
-    summaryDates = `${firstHumanizeDate}&nbsp;—&nbsp;${moment(tripFinishDate).format(`MMM DD`)}`;
+    summaryDates = `${firstHumanizeDate}&nbsp;—&nbsp;${moment(tripEndDate).format(`MMM DD`)}`;
   }
 
   return summaryDates;

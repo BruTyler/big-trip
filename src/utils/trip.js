@@ -11,8 +11,8 @@ export const getSorterRule = (sortType) => {
   switch (sortType) {
     case SortType.TIME:
       return (eventA, eventB) => {
-        const durationA = moment(eventA.finishDate).diff(moment(eventA.startDate));
-        const durationB = moment(eventB.finishDate).diff(moment(eventB.startDate));
+        const durationA = moment(eventA.endDate).diff(moment(eventA.startDate));
+        const durationB = moment(eventB.endDate).diff(moment(eventB.startDate));
         return durationB - durationA;
       };
     case SortType.PRICE:
@@ -27,7 +27,7 @@ export const getFilterRule = (filterType) => {
     case FilterType.FUTURE:
       return (event) => moment().isBefore(event.startDate);
     case FilterType.PAST:
-      return (event) => moment().isAfter(event.finishDate);
+      return (event) => moment().isAfter(event.endDate);
     default:
       return () => true;
   }

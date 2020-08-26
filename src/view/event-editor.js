@@ -1,8 +1,12 @@
 import moment from 'moment';
+import flatpickr from 'flatpickr';
 import SmartView from './smart.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext, defineDestination, defineAvailableOffers} from '../utils/trip.js';
+
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/material_blue.css';
 
 const BLANK_EVENT = {
   id: DefaultValues.POINT_ID,
@@ -11,7 +15,7 @@ const BLANK_EVENT = {
   basePrice: ``,
   offers: [],
   startDate: new Date(),
-  finishDate: new Date(),
+  endDate: new Date(),
   isFavorite: false
 };
 
@@ -117,7 +121,7 @@ const createRollupButtonTemplate = (pointId) => {
 const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
   const {
     id, destination, type, basePrice, offers: selectedOffers,
-    startDate, finishDate, isFavorite
+    startDate, endDate, isFavorite
   } = eventItem;
 
   const availableOffers = defineAvailableOffers(type, tripOffers);
@@ -163,7 +167,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
           <label class="visually-hidden" for="event-end-time">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${moment(finishDate).format(`DD/MM/YY HH:mm`)}">
+          <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${moment(endDate).format(`DD/MM/YY HH:mm`)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -200,7 +204,12 @@ export default class EventEditor extends SmartView {
     this._sourceItem = eventItem;
     this._destinations = destinations;
     this._tripOffers = tripOffers;
+    this._datepickers = {
+      start: null,
+      end: null
+    };
 
+    this._dateChangeHandler = this._dateChangeHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeClickHandler = this._typeClickHandler.bind(this);
     this._destinationInputHandler = this._destinationInputHandler.bind(this);
@@ -209,6 +218,7 @@ export default class EventEditor extends SmartView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDatepickers();
   }
 
   reset() {
@@ -221,6 +231,7 @@ export default class EventEditor extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepickers();
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setCancelClickHandler(this._callback.cancelClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
@@ -236,6 +247,35 @@ export default class EventEditor extends SmartView {
     this.getElement()
       .querySelector(`.event__input--destination`)
       .addEventListener(`input`, this._destinationInputHandler);
+  }
+
+  _setDatepickers() {
+    Object.entries(this._datepickers).forEach(([pickerKey, pickerInstance]) => {
+      if (pickerInstance) {
+        pickerInstance.destroy();
+        pickerInstance = null;
+      }
+
+      this._datepickers[pickerKey] = flatpickr(
+          this.getElement().querySelector(`#event-${pickerKey}-time`),
+          {
+            dateFormat: `d/m/y H:i`,
+            defaultDate: this._item[`${pickerKey}Date`],
+            enableTime: true,
+            // eslint-disable-next-line camelcase
+            time_24hr: true,
+            onChange: (evt) => this._dateChangeHandler(evt, `${pickerKey}Date`),
+          }
+      );
+    });
+  }
+
+  _dateChangeHandler([selectedDate], dateKey) {
+    if (selectedDate) {
+      const updatedProperty = Object.create(null);
+      updatedProperty[dateKey] = selectedDate;
+      this.updateData(updatedProperty, true);
+    }
   }
 
   _priceInputHandler(evt) {

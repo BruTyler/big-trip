@@ -29,7 +29,7 @@ const createOffersTemplate = (offers) => {
   </ul>`;
 };
 
-const createEventPointTemplate = ({destination, type, basePrice, offers, startDate, finishDate}) => {
+const createEventPointTemplate = ({destination, type, basePrice, offers, startDate, endDate}) => {
   return (
     `<li class="trip-events__item">
       <div class="event">
@@ -42,9 +42,9 @@ const createEventPointTemplate = ({destination, type, basePrice, offers, startDa
           <p class="event__time">
             <time class="event__start-time" datetime=${moment(startDate).format(`YYYY-MM-DD[T]HH:mm`)}>${moment(startDate).format(`HH:mm`)}</time>
             —
-            <time class="event__end-time" datetime=${moment(finishDate).format(`YYYY-MM-DD[T]HH:mm`)}>${moment(finishDate).format(`HH:mm`)}</time>
+            <time class="event__end-time" datetime=${moment(endDate).format(`YYYY-MM-DD[T]HH:mm`)}>${moment(endDate).format(`HH:mm`)}</time>
           </p>
-          <p class="event__duration">${humanizeDuration(finishDate, startDate)}</p>
+          <p class="event__duration">${humanizeDuration(endDate, startDate)}</p>
         </div>
 
         <p class="event__price">
