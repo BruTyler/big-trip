@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 import {capitilizeFirstLetter} from '../utils/common.js';
 import {SortType} from '../const.js';
 

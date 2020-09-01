@@ -1,5 +1,5 @@
 import {RenderPosition} from '../const.js';
-import AbstractView from '../view/abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 
 export const render = (container, child, place) => {
   if (container instanceof AbstractView) {

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import flatpickr from 'flatpickr';
-import SmartView from './smart.js';
+import SmartView from '../abstract/smart-view.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext, defineDestination, defineAvailableOffers} from '../utils/trip.js';

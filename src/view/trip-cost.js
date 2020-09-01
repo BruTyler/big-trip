@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 import {getTotalEventPrice} from '../utils/trip.js';
 
 const createTripCostTemplate = (tripEvents) => {

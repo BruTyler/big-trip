@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 
 export const createNoPointsTemplate = () => {
   return (

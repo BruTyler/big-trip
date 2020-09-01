@@ -1,5 +1,5 @@
 import moment from 'moment';
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 import {pickEventPretext} from '../utils/trip.js';
 import {capitilizeFirstLetter, humanizeDuration} from '../utils/common.js';
 import {BuisnessRequirements} from '../const.js';
