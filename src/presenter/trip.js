@@ -5,7 +5,7 @@ import NoPointsView from '../view/no-points.js';
 import {getSorterRule, getFilterRule, groupEvents, convertToNullableDate} from '../utils/trip.js';
 import {FilterType, RenderPosition, DefaultValues} from '../const.js';
 import {render, remove} from '../utils/render.js';
-import {updateItemById} from '../utils/common.js';
+import {updateItem as updateItemById} from '../utils/collection.js';
 
 export default class Trip {
   constructor(tripEventsContainer) {

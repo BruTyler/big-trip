@@ -45,4 +45,10 @@ export const RenderPosition = {
 export const DefaultValues = {
   POINT_ID: 0,
   SORT_TYPE: SortType.EVENT,
+  FILTER_TYPE: FilterType.EVERYTHING,
+};
+
+export const PointMode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
 };
