@@ -1,13 +1,14 @@
+import TripPresenter from './presenter/trip.js';
+import FilterPresenter from './presenter/filter.js';
 import PointsModel from './model/points.js';
 import DestinationsModel from './model/destinations.js';
 import OffersModel from './model/offers.js';
+import FilterModel from './model/filter.js';
 import TripSummaryView from './view/trip-summary.js';
 import TripPathView from './view/trip-path.js';
 import TripCostView from './view/trip-cost.js';
 import TripTabsView from './view/trip-tabs.js';
-import EventFilterView from './view/event-filter.js';
 import EventAddButtonView from './view/event-add-button.js';
-import TripPresenter from './presenter/trip.js';
 import {generateEvent} from './mocks/event.js';
 import {generateDestinations} from './mocks/destinations.js';
 import {generateOffers} from './mocks/offers.js';
@@ -29,6 +30,8 @@ offersModel.setItems(tripOffers);
 const pointsModel = new PointsModel();
 pointsModel.setItems(tripEvents);
 
+const filterModel = new FilterModel();
+
 const siteHeaderElement = document.querySelector(`.page-header`);
 const siteMainElement = document.querySelector(`.page-main`);
 
@@ -41,10 +44,12 @@ render(tripSummaryComponent, new TripCostView(pointsModel), RenderPosition.BEFOR
 
 const tripMenuElement = siteHeaderElement.querySelector(`.trip-controls`);
 render(tripMenuElement, new TripTabsView(), RenderPosition.BEFOREEND);
-render(tripMenuElement, new EventFilterView(), RenderPosition.BEFOREEND);
-render(tripMainElement, new EventAddButtonView(), RenderPosition.BEFOREEND);
 
+render(tripMainElement, new EventAddButtonView(), RenderPosition.BEFOREEND);
 const tripEventsElement = siteMainElement.querySelector(`.trip-events`);
 
-const tripPresenter = new TripPresenter(tripEventsElement, {pointsModel, offersModel, destinationsModel});
+const filterPresenter = new FilterPresenter(tripMenuElement, filterModel);
+const tripPresenter = new TripPresenter(tripEventsElement, {pointsModel, offersModel, destinationsModel, filterModel});
+
+filterPresenter.init();
 tripPresenter.init();

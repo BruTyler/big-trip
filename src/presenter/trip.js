@@ -2,16 +2,17 @@ import PointPresenter from './point.js';
 import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import NoPointsView from '../view/no-points.js';
-import {getSorterRule, groupEvents, convertToNullableDate} from '../utils/trip.js';
+import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
 import {RenderPosition, DefaultValues, UpdateType, UserAction} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
-  constructor(tripEventsContainer, {pointsModel, offersModel, destinationsModel} = {}) {
+  constructor(tripEventsContainer, {pointsModel, offersModel, destinationsModel, filterModel} = {}) {
     this._tripEventsContainer = tripEventsContainer;
     this._pointsModel = pointsModel;
     this._tripOffers = offersModel.getItems();
     this._destinations = destinationsModel.getItems();
+    this._filterModel = filterModel;
 
     this._currenSortType = DefaultValues.SORT_TYPE;
     this._dayStorage = Object.create(null);
@@ -26,6 +27,7 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -33,8 +35,10 @@ export default class Trip {
   }
 
   _getPoints() {
-    // .filter(getFilterRule(FilterType.EVERYTHING));
+    const filterType = this._filterModel.getFilter();
+
     return this._pointsModel.getItems()
+      .filter(getFilterRule(filterType))
       .sort(getSorterRule(this._currenSortType));
   }
 
