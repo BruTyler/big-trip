@@ -1,6 +1,6 @@
 import EventEditorView from '../view/event-editor.js';
 import EventPointView from '../view/event-point.js';
-import {RenderPosition, PointMode, UpdateType, UserAction, DefaultValues} from '../const.js';
+import {RenderPosition, PointMode, UpdateType, UserAction} from '../const.js';
 import {render, replace, remove} from '../utils/render.js';
 
 export default class Point {
@@ -30,7 +30,7 @@ export default class Point {
     const prevEditorComponent = this._editorComponent;
 
     this._pointComponent = new EventPointView(this._tripEvent);
-    this._editorComponent = new EventEditorView(this._tripEvent, destinations, tripOffers);
+    this._editorComponent = new EventEditorView(destinations, tripOffers, this._tripEvent);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._editorComponent.setCancelClickHandler(this._handleCancelClick);
@@ -100,14 +100,7 @@ export default class Point {
   }
 
   _handleFormSubmit(updatedPoint) {
-    const isNewPoint = updatedPoint.id === DefaultValues.POINT_ID;
-
-    this._changeData(
-        isNewPoint ? UserAction.ADD_POINT : UserAction.UPDATE_POINT,
-        isNewPoint ? UpdateType.MAJOR : UpdateType.MINOR,
-        updatedPoint
-    );
-
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, updatedPoint);
     this._replaceEditorToPoint();
   }
 }

@@ -130,6 +130,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
 
   const availableOffers = defineAvailableOffers(type, tripOffers);
 
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -201,7 +202,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
 };
 
 export default class EventEditor extends SmartView {
-  constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
+  constructor(destinations = [], tripOffers = [], eventItem = BLANK_EVENT) {
     super();
 
     this._item = eventItem;
@@ -246,10 +247,15 @@ export default class EventEditor extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepickers();
-    this.setFavoriteClickHandler(this._callback.favoriteClick);
-    this.setCancelClickHandler(this._callback.cancelClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+
+    if (this._callback.cancelClick) {
+      this.setCancelClickHandler(this._callback.cancelClick);
+    }
+    if (this._callback.favoriteClick) {
+      this.setFavoriteClickHandler(this._callback.favoriteClick);
+    }
   }
 
   _setInnerHandlers() {
