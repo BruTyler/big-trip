@@ -60,7 +60,11 @@ const createOfferItemTemplate = (offer, isChecked) => {
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${shortTitle}" type="checkbox" name="event-offer-${shortTitle}" ${isChecked ? `checked` : ``}>
+      <input class="event__offer-checkbox visually-hidden" id="event-offer-${shortTitle}" type="checkbox" 
+        name="event-offer-${shortTitle}" 
+        value="${offer.title}" 
+        ${isChecked ? `checked` : ``}
+      >
       <label class="event__offer-label" for="event-offer-${shortTitle}">
         <span class="event__offer-title">${offer.title}</span>
         +
@@ -280,11 +284,8 @@ export default class EventEditor extends SmartView {
 
   _priceInputHandler(evt) {
     evt.preventDefault();
-    const basePrice = evt.target.value;
-
-    this.updateData({
-      basePrice
-    }, true);
+    const basePrice = parseInt(evt.target.value, 10);
+    this.updateData({basePrice}, true);
   }
 
   _typeClickHandler(evt) {
@@ -297,7 +298,8 @@ export default class EventEditor extends SmartView {
     }
 
     this.updateData({
-      type: selectedEventType
+      type: selectedEventType,
+      offers: []
     });
   }
 
@@ -317,21 +319,37 @@ export default class EventEditor extends SmartView {
     }, isRenderActual);
   }
 
+  _defineSelectedOffers() {
+    const availableOffers = defineAvailableOffers(this._item.type, this._tripOffers);
+    const checkedTitles = Array
+      .from(this.getElement().querySelectorAll(`.event__offer-checkbox`))
+      .filter((element) => element.checked)
+      .map((element) => element.value);
+
+    const offers = availableOffers.filter((offer) => checkedTitles.includes(offer.title));
+
+    this.updateData({offers}, true);
+  }
+
   _cancelClickHandler(evt) {
     evt.preventDefault();
     this.reset();
     this._callback.cancelClick();
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
+  _favoriteClickHandler() {
+    this.updateData({
+      isFavorite: !this._sourceItem.isFavorite
+    }, true);
+    this._sourceItem = this._item;
+    this._callback.favoriteClick(this._item);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._sourceItem = this.item;
-    this._callback.formSubmit();
+    this._defineSelectedOffers();
+    this._sourceItem = this._item;
+    this._callback.formSubmit(this._item);
   }
 
   setFavoriteClickHandler(callback) {

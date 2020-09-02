@@ -1,8 +1,7 @@
 import EventEditorView from '../view/event-editor.js';
 import EventPointView from '../view/event-point.js';
-import {RenderPosition, PointMode} from '../const.js';
+import {RenderPosition, PointMode, UpdateType, UserAction, DefaultValues} from '../const.js';
 import {render, replace, remove} from '../utils/render.js';
-import {extend} from '../utils/common.js';
 
 export default class Point {
   constructor(pointContainer, changeData, changeMode) {
@@ -20,7 +19,7 @@ export default class Point {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleCancelClick = this._handleCancelClick.bind(this);
-    this._handleFormSubmit = this._handleCancelClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
   }
 
   init(tripEvent, destinations, tripOffers) {
@@ -90,13 +89,23 @@ export default class Point {
     this._replaceEditorToPoint();
   }
 
-  _handleFavoriteClick() {
-    const updatedProperty = {isFavorite: !this._tripEvent.isFavorite};
-    const updatedEvent = extend(this._tripEvent, updatedProperty);
-    this._changeData(updatedEvent);
+  _handleDeleteClick() {
+    this._changeData(UserAction.DELETE_POINT, UpdateType.MAJOR, this._tripEvent);
   }
 
-  _handleFormSubmit() {
+  _handleFavoriteClick(updatedPoint) {
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, updatedPoint);
+  }
+
+  _handleFormSubmit(updatedPoint) {
+    const isNewPoint = updatedPoint.id === DefaultValues.POINT_ID;
+
+    this._changeData(
+        isNewPoint ? UserAction.ADD_POINT : UserAction.UPDATE_POINT,
+        isNewPoint ? UpdateType.MAJOR : UpdateType.MINOR,
+        updatedPoint
+    );
+
     this._replaceEditorToPoint();
   }
 }

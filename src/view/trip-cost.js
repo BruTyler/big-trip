@@ -15,10 +15,10 @@ const createTripCostTemplate = (tripEvents) => {
 };
 
 export default class TripCost extends AbstractView {
-  constructor(tripEvents) {
+  constructor(pointsModel) {
     super();
 
-    this._tripEvents = tripEvents;
+    this._tripEvents = pointsModel.getItems();
   }
 
   getTemplate() {
