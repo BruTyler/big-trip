@@ -4,7 +4,7 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import NoPointsView from '../view/no-points.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
@@ -72,7 +72,7 @@ export default class Trip {
     }
   }
 
-  _handleModelEvent(updateType) {
+  _handleModelEvent(updateType, payload) {
     switch (updateType) {
       case UpdateType.PATCH:
         break;
@@ -81,7 +81,8 @@ export default class Trip {
         this._renderChainPoints(this._getPoints());
         break;
       case UpdateType.MAJOR:
-        this._clearTripBoard();
+        const resetSortType = Object.values(FilterType).includes(payload);
+        this._clearTripBoard({resetSortType});
         this._renderTripBoard();
         break;
     }
@@ -159,7 +160,11 @@ export default class Trip {
     this._renderChainPoints(this._getPoints());
   }
 
-  _clearTripBoard() {
+  _clearTripBoard({resetSortType} = {}) {
+    if (resetSortType) {
+      this._currenSortType = DefaultValues.SORT_TYPE;
+    }
+
     this._pointNewPresenter.destroy();
     this._clearChainPoints();
     remove(this._noPointsComponent);
