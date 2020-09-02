@@ -29,10 +29,20 @@ const createEventTypesTemplate = (selectedEventType) => {
     .join(``);
 };
 
-const createDestinationItemsTemplate = (destinations) => {
-  return destinations
-    .map((city) => (`<option value="${city.name}"></option>`))
-    .join(``);
+const createDestinationItemsTemplate = (destinations, currentDestination, pointId) => {
+  const {name: currentCity} = currentDestination;
+
+  const destinationOptions = destinations
+    .map((city) => (
+      `<option value="${city.name}" ${currentCity === city.name ? `selected` : ``}>
+        ${city.name}
+      </option>`));
+
+  if (pointId === DefaultValues.POINT_ID) {
+    destinationOptions.unshift(`<option selected disabled></option>`);
+  }
+
+  return destinationOptions.join(``);
 };
 
 const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
@@ -157,10 +167,11 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
           <label class="event__label  event__type-output" for="event-destination">
             ${capitilizeFirstLetter(type)} ${pickEventPretext(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination.name}" list="destination-list">
-          <datalist id="destination-list">
-            ${createDestinationItemsTemplate(destinations)}
-          </datalist>
+          <select class="event__input  event__input--destination" id="event-destination" name="event-destination" value="${destination.name}" list="destination-list">
+            <datalist id="destination-list">
+              ${createDestinationItemsTemplate(destinations, destination, id)}
+            </datalist>
+          </select>
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -180,7 +191,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${basePrice}" autocomplete="off">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -267,7 +278,7 @@ export default class EventEditor extends SmartView {
       .addEventListener(`click`, this._typeClickHandler);
     this.getElement()
       .querySelector(`.event__input--destination`)
-      .addEventListener(`input`, this._destinationInputHandler);
+      .addEventListener(`change`, this._destinationInputHandler);
   }
 
   _setDatepickers() {
