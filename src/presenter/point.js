@@ -1,13 +1,7 @@
 import EventEditorView from '../view/event-editor.js';
 import EventPointView from '../view/event-point.js';
-import {RenderPosition} from '../const.js';
+import {RenderPosition, PointMode, UpdateType, UserAction} from '../const.js';
 import {render, replace, remove} from '../utils/render.js';
-import {extend} from '../utils/common.js';
-
-const Mode = {
-  DEFAULT: `DEFAULT`,
-  EDITING: `EDITING`
-};
 
 export default class Point {
   constructor(pointContainer, changeData, changeMode) {
@@ -17,7 +11,7 @@ export default class Point {
 
     this._pointComponent = null;
     this._editorComponent = null;
-    this._mode = Mode.DEFAULT;
+    this._mode = PointMode.DEFAULT;
 
     this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
     this._replacePointToEditor = this._replacePointToEditor.bind(this);
@@ -25,7 +19,8 @@ export default class Point {
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleCancelClick = this._handleCancelClick.bind(this);
-    this._handleFormSubmit = this._handleCancelClick.bind(this);
+    this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(tripEvent, destinations, tripOffers) {
@@ -35,23 +30,24 @@ export default class Point {
     const prevEditorComponent = this._editorComponent;
 
     this._pointComponent = new EventPointView(this._tripEvent);
-    this._editorComponent = new EventEditorView(this._tripEvent, destinations, tripOffers);
+    this._editorComponent = new EventEditorView(destinations, tripOffers, this._tripEvent);
 
     this._pointComponent.setEditClickHandler(this._handleEditClick);
     this._editorComponent.setCancelClickHandler(this._handleCancelClick);
     this._editorComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._editorComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevEditorComponent === null) {
       render(this._pointContainer, this._pointComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    if (this._mode === Mode.DEFAULT) {
+    if (this._mode === PointMode.DEFAULT) {
       replace(this._pointComponent, prevPointComponent);
     }
 
-    if (this._mode === Mode.EDITING) {
+    if (this._mode === PointMode.EDITING) {
       replace(this._editorComponent, prevEditorComponent);
     }
 
@@ -60,7 +56,7 @@ export default class Point {
   }
 
   resetView() {
-    if (this._mode !== Mode.DEFAULT) {
+    if (this._mode !== PointMode.DEFAULT) {
       this._replaceEditorToPoint();
     }
   }
@@ -69,13 +65,13 @@ export default class Point {
     replace(this._editorComponent, this._pointComponent);
     document.addEventListener(`keydown`, this._handleEscKeyDown);
     this._changeMode();
-    this._mode = Mode.EDITING;
+    this._mode = PointMode.EDITING;
   }
 
   _replaceEditorToPoint() {
     replace(this._pointComponent, this._editorComponent);
     document.removeEventListener(`keydown`, this._handleEscKeyDown);
-    this._mode = Mode.DEFAULT;
+    this._mode = PointMode.DEFAULT;
   }
 
   _handleEscKeyDown(evt) {
@@ -95,13 +91,16 @@ export default class Point {
     this._replaceEditorToPoint();
   }
 
-  _handleFavoriteClick() {
-    const updatedProperty = {isFavorite: !this._tripEvent.isFavorite};
-    const updatedEvent = extend(this._tripEvent, updatedProperty);
-    this._changeData(updatedEvent);
+  _handleDeleteClick() {
+    this._changeData(UserAction.DELETE_POINT, UpdateType.MAJOR, this._tripEvent);
   }
 
-  _handleFormSubmit() {
+  _handleFavoriteClick(updatedPoint) {
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, updatedPoint);
+  }
+
+  _handleFormSubmit(updatedPoint) {
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, updatedPoint);
     this._replaceEditorToPoint();
   }
 }

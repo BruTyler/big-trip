@@ -1,5 +1,5 @@
 import moment from 'moment';
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 
 const createDayTitleTemplate = (dayId, groupedDate) => {
   if (groupedDate === null) {

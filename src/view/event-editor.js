@@ -1,6 +1,6 @@
 import moment from 'moment';
 import flatpickr from 'flatpickr';
-import SmartView from './smart.js';
+import SmartView from '../abstract/smart-view.js';
 import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext, defineDestination, defineAvailableOffers} from '../utils/trip.js';
@@ -29,10 +29,20 @@ const createEventTypesTemplate = (selectedEventType) => {
     .join(``);
 };
 
-const createDestinationItemsTemplate = (destinations) => {
-  return destinations
-    .map((city) => (`<option value="${city.name}"></option>`))
-    .join(``);
+const createDestinationItemsTemplate = (destinations, currentDestination, pointId) => {
+  const {name: currentCity} = currentDestination;
+
+  const destinationOptions = destinations
+    .map((city) => (
+      `<option value="${city.name}" ${currentCity === city.name ? `selected` : ``}>
+        ${city.name}
+      </option>`));
+
+  if (pointId === DefaultValues.POINT_ID) {
+    destinationOptions.unshift(`<option selected disabled></option>`);
+  }
+
+  return destinationOptions.join(``);
 };
 
 const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
@@ -60,7 +70,11 @@ const createOfferItemTemplate = (offer, isChecked) => {
 
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${shortTitle}" type="checkbox" name="event-offer-${shortTitle}" ${isChecked ? `checked` : ``}>
+      <input class="event__offer-checkbox visually-hidden" id="event-offer-${shortTitle}" type="checkbox" 
+        name="event-offer-${shortTitle}" 
+        value="${offer.title}" 
+        ${isChecked ? `checked` : ``}
+      >
       <label class="event__offer-label" for="event-offer-${shortTitle}">
         <span class="event__offer-title">${offer.title}</span>
         +
@@ -126,6 +140,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
 
   const availableOffers = defineAvailableOffers(type, tripOffers);
 
+
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -152,10 +167,11 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
           <label class="event__label  event__type-output" for="event-destination">
             ${capitilizeFirstLetter(type)} ${pickEventPretext(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination" type="text" name="event-destination" value="${destination.name}" list="destination-list">
-          <datalist id="destination-list">
-            ${createDestinationItemsTemplate(destinations)}
-          </datalist>
+          <select class="event__input  event__input--destination" id="event-destination" name="event-destination" value="${destination.name}" list="destination-list">
+            <datalist id="destination-list">
+              ${createDestinationItemsTemplate(destinations, destination, id)}
+            </datalist>
+          </select>
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -175,7 +191,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${basePrice}" autocomplete="off">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -197,7 +213,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
 };
 
 export default class EventEditor extends SmartView {
-  constructor(eventItem = BLANK_EVENT, destinations = [], tripOffers = []) {
+  constructor(destinations = [], tripOffers = [], eventItem = BLANK_EVENT) {
     super();
 
     this._item = eventItem;
@@ -215,10 +231,20 @@ export default class EventEditor extends SmartView {
     this._destinationInputHandler = this._destinationInputHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._cancelClickHandler = this._cancelClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepickers();
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   reset() {
@@ -232,9 +258,15 @@ export default class EventEditor extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepickers();
-    this.setFavoriteClickHandler(this._callback.favoriteClick);
-    this.setCancelClickHandler(this._callback.cancelClick);
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
+
+    if (this._callback.cancelClick) {
+      this.setCancelClickHandler(this._callback.cancelClick);
+    }
+    if (this._callback.favoriteClick) {
+      this.setFavoriteClickHandler(this._callback.favoriteClick);
+    }
   }
 
   _setInnerHandlers() {
@@ -246,7 +278,7 @@ export default class EventEditor extends SmartView {
       .addEventListener(`click`, this._typeClickHandler);
     this.getElement()
       .querySelector(`.event__input--destination`)
-      .addEventListener(`input`, this._destinationInputHandler);
+      .addEventListener(`change`, this._destinationInputHandler);
   }
 
   _setDatepickers() {
@@ -280,11 +312,8 @@ export default class EventEditor extends SmartView {
 
   _priceInputHandler(evt) {
     evt.preventDefault();
-    const basePrice = evt.target.value;
-
-    this.updateData({
-      basePrice
-    }, true);
+    const basePrice = parseInt(evt.target.value, 10);
+    this.updateData({basePrice}, true);
   }
 
   _typeClickHandler(evt) {
@@ -297,7 +326,8 @@ export default class EventEditor extends SmartView {
     }
 
     this.updateData({
-      type: selectedEventType
+      type: selectedEventType,
+      offers: []
     });
   }
 
@@ -317,21 +347,47 @@ export default class EventEditor extends SmartView {
     }, isRenderActual);
   }
 
+  _defineSelectedOffers() {
+    const availableOffers = defineAvailableOffers(this._item.type, this._tripOffers);
+    const checkedTitles = Array
+      .from(this.getElement().querySelectorAll(`.event__offer-checkbox`))
+      .filter((element) => element.checked)
+      .map((element) => element.value);
+
+    const offers = availableOffers.filter((offer) => checkedTitles.includes(offer.title));
+
+    this.updateData({offers}, true);
+  }
+
   _cancelClickHandler(evt) {
     evt.preventDefault();
     this.reset();
     this._callback.cancelClick();
   }
 
-  _favoriteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.favoriteClick();
+  _favoriteClickHandler() {
+    this.updateData({
+      isFavorite: !this._sourceItem.isFavorite
+    }, true);
+    this._sourceItem = this._item;
+    this._callback.favoriteClick(this._item);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._sourceItem = this.item;
-    this._callback.formSubmit();
+    this._defineSelectedOffers();
+    this._sourceItem = this._item;
+    this._callback.formSubmit(this._item);
+  }
+
+  _deleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick();
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
   }
 
   setFavoriteClickHandler(callback) {

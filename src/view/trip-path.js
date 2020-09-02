@@ -1,6 +1,6 @@
 import {excludeRepeatingInSequence} from '../utils/common.js';
 import moment from 'moment';
-import AbstractView from './abstract.js';
+import AbstractView from '../abstract/simple-view.js';
 import {getSorterRule} from '../utils/trip.js';
 import {SortType} from '../const.js';
 
@@ -52,7 +52,6 @@ const createTripPathTemplate = (tripEvents) => {
   }
 
   const sortedEvents = tripEvents
-    .slice()
     .sort(getSorterRule(SortType.EVENT));
 
   return (
@@ -64,10 +63,10 @@ const createTripPathTemplate = (tripEvents) => {
 };
 
 export default class TripPath extends AbstractView {
-  constructor(tripEvents) {
+  constructor(pointsModel) {
     super();
 
-    this._tripEvents = tripEvents;
+    this._tripEvents = pointsModel.getItems();
   }
 
   getTemplate() {
