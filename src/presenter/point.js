@@ -20,6 +20,7 @@ export default class Point {
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleCancelClick = this._handleCancelClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(tripEvent, destinations, tripOffers) {
@@ -35,6 +36,7 @@ export default class Point {
     this._editorComponent.setCancelClickHandler(this._handleCancelClick);
     this._editorComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._editorComponent.setFormSubmitHandler(this._handleFormSubmit);
+    this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevEditorComponent === null) {
       render(this._pointContainer, this._pointComponent, RenderPosition.BEFOREEND);
