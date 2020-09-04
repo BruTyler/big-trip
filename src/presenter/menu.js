@@ -2,38 +2,71 @@ import FilterPresenter from '../presenter/filter.js';
 import TripTabsView from '../view/trip-tabs.js';
 import EventAddButtonView from '../view/event-add-button.js';
 import {render} from '../utils/render.js';
-import {UpdateType, RenderPosition, ModelType} from '../const.js';
+import {UpdateType, RenderPosition, ModelType, MenuItem, DefaultValues} from '../const.js';
 
 export default class Menu {
   constructor(menuContainer, modelStore) {
     this._menuContainer = menuContainer;
     this._pointNewModel = modelStore.get(ModelType.POINT_NEW);
+    this._menuModel = modelStore.get(ModelType.MENU);
+    this._filterModel = modelStore.get(ModelType.FILTER);
 
-    const tripMenuElement = this._menuContainer.querySelector(`.trip-controls`);
-    const menuComponent = new TripTabsView();
-    render(tripMenuElement, menuComponent, RenderPosition.BEFOREEND);
+    this._controlsContainer = this._menuContainer.querySelector(`.trip-controls`);
 
-    this._buttonAddComponent = new EventAddButtonView();
+    this._tabsComponent = null;
+    this._buttonAddComponent = null;
 
-    render(this._menuContainer, this._buttonAddComponent, RenderPosition.BEFOREEND);
+    this._filterPresenter = new FilterPresenter(this._controlsContainer, modelStore);
 
-    const filterPresenter = new FilterPresenter(tripMenuElement, modelStore);
-    filterPresenter.init();
-
+    this._handleMenuClick = this._handleMenuClick.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._pointNewModel.addObserver(this._handleModelEvent);
 
-    document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      this._pointNewModel.setItem(UpdateType.MAJOR, evt.target);
-    });
+    this._pointNewModel.addObserver(this._handleModelEvent);
   }
 
   init() {
+    this._tabsComponent = new TripTabsView(this._menuModel.getItem());
+    render(this._controlsContainer, this._tabsComponent, RenderPosition.BEFORE_END);
+
+    this._buttonAddComponent = new EventAddButtonView();
+    render(this._menuContainer, this._buttonAddComponent, RenderPosition.BEFORE_END);
+
+    this._tabsComponent.setMenuClickHandler(this._handleMenuClick);
+    this._buttonAddComponent.setButtonClickHandler(this._handleMenuClick);
+
+    this._filterPresenter.init();
   }
 
   _handleModelEvent(_event, payload) {
     const isPointNewActive = payload !== null;
     this._buttonAddComponent.setDisabledButton(isPointNewActive);
+  }
+
+  _handleMenuClick(menuItem) {
+    switch (menuItem) {
+      case MenuItem.ADD_NEW_EVENT:
+        this._pointNewModel.setItem(UpdateType.MAJOR, menuItem);
+        this._setActiveNavItem(MenuItem.TABLE);
+        break;
+      case MenuItem.TABLE:
+        this._setActiveNavItem(menuItem);
+        break;
+      case MenuItem.STATS:
+        this._setActiveNavItem(menuItem);
+        break;
+    }
+  }
+
+  _setActiveNavItem(tab) {
+    if (this._menuModel.getItem() === tab) {
+      return;
+    }
+
+    if (this._filterModel.getItem() !== DefaultValues.FILTER_TYPE) {
+      this._filterModel.setItem(DefaultValues.FILTER_TYPE);
+    }
+
+    this._menuModel.setItem(UpdateType.MAJOR, tab);
+    this._tabsComponent.setActiveTab(tab);
   }
 }

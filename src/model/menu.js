@@ -1,18 +1,11 @@
-import Observer from '../abstract/observer.js';
+import {ObserverDecorator as Observervable} from '../abstract/observer.js';
+import ActiveItem from '../abstract/active-item.js';
+import {DefaultValues} from '../const.js';
 
-export default class Menu extends Observer {
+// eslint-disable-next-line new-cap
+export default class Menu extends Observervable(ActiveItem) {
   constructor() {
     super();
-
-    this._activeItem = null;
-  }
-
-  setItem(updateType, selectedItem) {
-    this._activeItem = selectedItem;
-    this._notify(updateType, selectedItem);
-  }
-
-  getItem() {
-    return this._activeFilter;
+    this._activeItem = DefaultValues.MAIN_NAV;
   }
 }

@@ -21,11 +21,11 @@ export default class Summary {
     this._summaryComponent = new TripSummaryView();
 
     const points = this._pointsModel.getItems();
-    render(this._summaryComponent, new TripPathView(points), RenderPosition.BEFOREEND);
-    render(this._summaryComponent, new TripCostView(points), RenderPosition.BEFOREEND);
+    render(this._summaryComponent, new TripPathView(points), RenderPosition.BEFORE_END);
+    render(this._summaryComponent, new TripCostView(points), RenderPosition.BEFORE_END);
 
     if (prevSummaryComponent === null) {
-      render(this._summaryContainer, this._summaryComponent, RenderPosition.AFTERBEGIN);
+      render(this._summaryContainer, this._summaryComponent, RenderPosition.AFTER_BEGIN);
       return;
     }
 

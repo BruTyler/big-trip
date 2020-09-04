@@ -1,5 +1,5 @@
 import SmartView from '../abstract/smart-view.js';
-import {TabNavItem, DefaultValues} from '../const.js';
+import {TabNavItem} from '../const.js';
 import {capitilizeFirstLetter} from '../utils/common.js';
 
 const createNavTemplate = (currentTab) => {
@@ -8,7 +8,7 @@ const createNavTemplate = (currentTab) => {
     .map((tab) => (
       `<a href="#"
         class="trip-tabs__btn  ${currentTab === tab ? `trip-tabs__btn--active` : ``}"
-        value="${tab}"
+        data-tab="${tab}"
       >
         ${capitilizeFirstLetter(tab)}
       </a>`))
@@ -19,41 +19,43 @@ const createTripTabsTemplate = (currentTab) => {
   return (
     `<nav class="trip-controls__trip-tabs  trip-tabs">
       ${createNavTemplate(currentTab)}
-    </nav>`
+      </nav>
+    </div>`
   );
 };
 
 export default class TripTabs extends SmartView {
-  constructor() {
+  constructor(initTab) {
     super();
-    this._currentTab = DefaultValues.MAIN_NAV;
+    this._item = initTab;
 
     this._menuClickHandler = this._menuClickHandler.bind(this);
   }
 
-  restoreHandlers() {
+  setActiveTab(tab) {
+    this._item = tab;
+    this.updateElement();
+  }
 
+  restoreHandlers() {
+    this.setMenuClickHandler(this._callback.menuClick);
   }
 
   getTemplate() {
-    return createTripTabsTemplate(this._currentTab);
+    return createTripTabsTemplate(this._item);
   }
 
   _menuClickHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
+
     evt.preventDefault();
-    this._callback.menuClick(evt.target.value);
+    this._callback.menuClick(evt.target.dataset.tab);
   }
 
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
-    this.getElement().addEventListener(`change`, this._menuClickHandler);
-  }
-
-  setMenuItem(menuItem) {
-    const item = this.getElement().querySelector(`[value=${menuItem}]`);
-
-    if (item !== null) {
-      item.checked = true;
-    }
+    this.getElement().addEventListener(`click`, this._menuClickHandler);
   }
 }

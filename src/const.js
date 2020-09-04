@@ -38,8 +38,8 @@ export const FilterType = {
 };
 
 export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
+  AFTER_BEGIN: `afterbegin`,
+  BEFORE_END: `beforeend`,
 };
 
 export const PointMode = {

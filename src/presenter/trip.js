@@ -112,7 +112,7 @@ export default class Trip {
 
     this._eventSorterComponent = new EventSorterView(this._currenSortType);
     this._eventSorterComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-    render(this._tripEventsContainer, this._eventSorterComponent, RenderPosition.BEFOREEND);
+    render(this._tripEventsContainer, this._eventSorterComponent, RenderPosition.BEFORE_END);
   }
 
   _renderNoPoints() {
@@ -121,7 +121,7 @@ export default class Trip {
     }
 
     this._noPointsComponent = new NoPointsView();
-    render(this._tripEventsContainer, this._noPointsComponent, RenderPosition.AFTERBEGIN);
+    render(this._tripEventsContainer, this._noPointsComponent, RenderPosition.AFTER_BEGIN);
   }
 
   _renderSinglePoint(pointContainer, tripEvent) {
@@ -138,7 +138,7 @@ export default class Trip {
       const dayId = groupIndex + 1;
       const eventDayComponent = new EventDayView(dayId, groupedDate);
       this._dayStorage[dayId] = eventDayComponent;
-      render(this._tripEventsContainer, eventDayComponent, RenderPosition.BEFOREEND);
+      render(this._tripEventsContainer, eventDayComponent, RenderPosition.BEFORE_END);
 
       groupedEvents[shortDay].forEach((tripEvent) => {
         const pointContainer = eventDayComponent.getPointContainer();

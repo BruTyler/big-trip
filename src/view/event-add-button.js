@@ -12,13 +12,25 @@ export const createEventAddButtonTemplate = () => {
 export default class EventAddButton extends AbstractView {
   constructor() {
     super();
-
+    this._buttonClickHandler = this._buttonClickHandler.bind(this);
   }
+
   getTemplate() {
     return createEventAddButtonTemplate();
   }
 
   setDisabledButton(state) {
     this.getElement().disabled = state;
+  }
+
+  _buttonClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.buttonClick(evt.target.value);
+  }
+
+  setButtonClickHandler(callback) {
+    this._callback.buttonClick = callback;
+    this.getElement()
+      .addEventListener(`click`, this._buttonClickHandler);
   }
 }
