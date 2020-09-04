@@ -1,11 +1,11 @@
 import FilterView from '../view/event-filter.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UpdateType, RenderPosition} from '../const.js';
+import {UpdateType, RenderPosition, ModelType} from '../const.js';
 
 export default class Filter {
-  constructor(filterContainer, filterModel) {
+  constructor(filterContainer, modelStore) {
     this._filterContainer = filterContainer;
-    this._filterModel = filterModel;
+    this._filterModel = modelStore.get(ModelType.FILTER);
     this._currentFilter = null;
 
     this._filterComponent = null;

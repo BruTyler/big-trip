@@ -42,12 +42,6 @@ export const RenderPosition = {
   BEFOREEND: `beforeend`
 };
 
-export const DefaultValues = {
-  POINT_ID: 0,
-  SORT_TYPE: SortType.EVENT,
-  FILTER_TYPE: FilterType.EVERYTHING,
-};
-
 export const PointMode = {
   DEFAULT: `DEFAULT`,
   EDITING: `EDITING`
@@ -63,4 +57,30 @@ export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
+};
+
+export const TabNavItem = {
+  TABLE: `tasks`,
+  STATS: `stats`
+};
+
+export const TabAdditionalItem = {
+  ADD_NEW_EVENT: `ADD_NEW_EVENT`,
+};
+
+export const MenuItem = Object.assign({}, TabNavItem, TabAdditionalItem);
+
+export const ModelType = {
+  DESTINATIONS: `Destinations`,
+  FILTER: `Filter`,
+  OFFERS: `Offers`,
+  MENU: `Menu`,
+  POINTS: `Points`,
+};
+
+export const DefaultValues = {
+  POINT_ID: 0,
+  SORT_TYPE: SortType.EVENT,
+  FILTER_TYPE: FilterType.EVERYTHING,
+  MAIN_NAV: TabNavItem.TABLE,
 };

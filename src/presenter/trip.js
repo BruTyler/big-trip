@@ -4,16 +4,16 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import NoPointsView from '../view/no-points.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
-  constructor(tripEventsContainer, {pointsModel, offersModel, destinationsModel, filterModel} = {}) {
+  constructor(tripEventsContainer, modelStore) {
     this._tripEventsContainer = tripEventsContainer;
-    this._pointsModel = pointsModel;
-    this._tripOffers = offersModel.getItems();
-    this._destinations = destinationsModel.getItems();
-    this._filterModel = filterModel;
+    this._pointsModel = modelStore.get(ModelType.POINTS);
+    this._tripOffers = modelStore.get(ModelType.OFFERS).getItems();
+    this._destinations = modelStore.get(ModelType.DESTINATIONS).getItems();
+    this._filterModel = modelStore.get(ModelType.FILTER);
 
     this._currenSortType = DefaultValues.SORT_TYPE;
     this._dayStorage = Object.create(null);
