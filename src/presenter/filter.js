@@ -36,6 +36,15 @@ export default class Filter {
     remove(prevFilterComponent);
   }
 
+  destroy() {
+    if (this._filterComponent === null) {
+      return;
+    }
+
+    remove(this._filterComponent);
+    this._filterComponent = null;
+  }
+
   _handleModelEvent() {
     this.init();
   }

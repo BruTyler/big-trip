@@ -46,13 +46,16 @@ export default class Menu {
     switch (menuItem) {
       case MenuItem.ADD_NEW_EVENT:
         this._pointNewModel.setItem(UpdateType.MAJOR, menuItem);
+        this._filterPresenter.init();
         this._setActiveNavItem(MenuItem.TABLE);
         break;
       case MenuItem.TABLE:
         this._setActiveNavItem(menuItem);
+        this._filterPresenter.init();
         break;
       case MenuItem.STATS:
         this._setActiveNavItem(menuItem);
+        this._filterPresenter.destroy();
         break;
     }
   }
@@ -63,7 +66,7 @@ export default class Menu {
     }
 
     if (this._filterModel.getItem() !== DefaultValues.FILTER_TYPE) {
-      this._filterModel.setItem(DefaultValues.FILTER_TYPE);
+      this._filterModel.setItem(UpdateType.MAJOR, DefaultValues.FILTER_TYPE);
     }
 
     this._menuModel.setItem(UpdateType.MAJOR, tab);

@@ -4,7 +4,7 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import NoPointsView from '../view/no-points.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
@@ -15,6 +15,7 @@ export default class Trip {
     this._destinations = modelStore.get(ModelType.DESTINATIONS).getItems();
     this._filterModel = modelStore.get(ModelType.FILTER);
     this._pointNewModel = modelStore.get(ModelType.POINT_NEW);
+    this._menuModel = modelStore.get(ModelType.MENU);
 
     this._currenSortType = DefaultValues.SORT_TYPE;
     this._dayStorage = Object.create(null);
@@ -26,12 +27,14 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._handleMenuEvent = this._handleMenuEvent.bind(this);
     this._createPoint = this._createPoint.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
     this._pointNewModel.addObserver(this._createPoint);
+    this._menuModel.addObserver(this._handleMenuEvent);
 
     this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, modelStore, this._handleViewAction);
   }
@@ -46,7 +49,6 @@ export default class Trip {
     }
 
     this._currentSortType = DefaultValues.SORT_TYPE;
-    this._filterModel.setItem(UpdateType.MAJOR, DefaultValues.FILTER_TYPE);
     this._pointNewPresenter.init(this._destinations, this._tripOffers);
   }
 
@@ -91,6 +93,19 @@ export default class Trip {
         const resetSortType = Object.values(FilterType).includes(payload);
         this._clearTripBoard({resetSortType});
         this._renderTripBoard();
+        break;
+    }
+  }
+
+  _handleMenuEvent(_updateType, menuItem) {
+    switch (menuItem) {
+      case TabNavItem.TABLE:
+        this._renderTripBoard();
+        break;
+      case TabNavItem.STATS:
+        this._clearTripBoard({resetSortType: true});
+        break;
+      default:
         break;
     }
   }
