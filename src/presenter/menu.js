@@ -45,9 +45,9 @@ export default class Menu {
   _handleMenuClick(menuItem) {
     switch (menuItem) {
       case MenuItem.ADD_NEW_EVENT:
-        this._pointNewModel.setItem(UpdateType.MAJOR, menuItem);
-        this._filterPresenter.init();
         this._setActiveNavItem(MenuItem.TABLE);
+        this._filterPresenter.init();
+        this._pointNewModel.setItem(UpdateType.MAJOR, menuItem);
         break;
       case MenuItem.TABLE:
         this._setActiveNavItem(menuItem);
@@ -61,12 +61,12 @@ export default class Menu {
   }
 
   _setActiveNavItem(tab) {
-    if (this._menuModel.getItem() === tab) {
-      return;
-    }
-
     if (this._filterModel.getItem() !== DefaultValues.FILTER_TYPE) {
       this._filterModel.setItem(UpdateType.MAJOR, DefaultValues.FILTER_TYPE);
+    }
+
+    if (this._menuModel.getItem() === tab) {
+      return;
     }
 
     this._menuModel.setItem(UpdateType.MAJOR, tab);

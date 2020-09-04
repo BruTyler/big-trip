@@ -31,16 +31,28 @@ export default class Trip {
     this._createPoint = this._createPoint.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-    this._pointNewModel.addObserver(this._createPoint);
     this._menuModel.addObserver(this._handleMenuEvent);
 
     this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, modelStore, this._handleViewAction);
   }
 
   init() {
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+    this._pointNewModel.addObserver(this._createPoint);
+
     this._renderTripBoard();
+  }
+
+  destroy() {
+    this._clearTripBoard({resetSortType: true});
+
+    remove(this._taskListComponent);
+    remove(this._boardComponent);
+
+    this._pointsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+    this._pointNewModel.removeObserver(this._createPoint);
   }
 
   _createPoint(_event, payload) {
