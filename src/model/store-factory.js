@@ -4,9 +4,10 @@ import Points from './points.js';
 import Filter from './filter.js';
 import Offers from './offers.js';
 import Destinations from './destinations.js';
+import PointNew from './point-new.js';
 
 export default class StoreFactory {
-  static createStore(tripEvents, tripOffers, destinations) {
+  static create(tripEvents, tripOffers, destinations) {
     const modelStore = new Store();
 
     const menuModel = new Menu();
@@ -23,6 +24,9 @@ export default class StoreFactory {
     const pointsModel = new Points();
     pointsModel.setItems(tripEvents);
     modelStore.set(pointsModel);
+
+    const pointNew = new PointNew();
+    modelStore.set(pointNew);
 
     const filterModel = new Filter();
     modelStore.set(filterModel);

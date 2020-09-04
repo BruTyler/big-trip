@@ -14,6 +14,7 @@ export default class Trip {
     this._tripOffers = modelStore.get(ModelType.OFFERS).getItems();
     this._destinations = modelStore.get(ModelType.DESTINATIONS).getItems();
     this._filterModel = modelStore.get(ModelType.FILTER);
+    this._pointNewModel = modelStore.get(ModelType.POINT_NEW);
 
     this._currenSortType = DefaultValues.SORT_TYPE;
     this._dayStorage = Object.create(null);
@@ -25,26 +26,32 @@ export default class Trip {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._createPoint = this._createPoint.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._pointNewModel.addObserver(this._createPoint);
 
-    this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, modelStore, this._handleViewAction);
   }
 
   init() {
     this._renderTripBoard();
   }
 
-  createPoint() {
+  _createPoint(_event, payload) {
+    if (payload === null) {
+      return;
+    }
+
     this._currentSortType = DefaultValues.SORT_TYPE;
-    this._filterModel.setFilter(UpdateType.MAJOR, DefaultValues.FILTER_TYPE);
+    this._filterModel.setItem(UpdateType.MAJOR, DefaultValues.FILTER_TYPE);
     this._pointNewPresenter.init(this._destinations, this._tripOffers);
   }
 
   _getPoints() {
-    const filterType = this._filterModel.getFilter();
+    const filterType = this._filterModel.getItem();
 
     return this._pointsModel.getItems()
       .filter(getFilterRule(filterType))

@@ -76,6 +76,7 @@ export const ModelType = {
   OFFERS: `Offers`,
   MENU: `Menu`,
   POINTS: `Points`,
+  POINT_NEW: `PointNew`,
 };
 
 export const DefaultValues = {
