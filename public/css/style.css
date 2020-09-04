@@ -262,6 +262,10 @@ main {
     opacity: 1; }
   .trip-filters__filter-label:active {
     opacity: 0.6; }
+  .trip-filters__filter-label--empty {
+    cursor: default; }
+  .trip-filters__filter-label--empty:hover {
+    opacity: 0.6; }
 
 .trip-filters__filter-input:checked + .trip-filters__filter-label {
   opacity: 1;

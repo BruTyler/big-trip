@@ -1,11 +1,13 @@
 import FilterView from '../view/event-filter.js';
 import {render, replace, remove} from '../utils/render.js';
-import {UpdateType, RenderPosition, ModelType} from '../const.js';
+import {UpdateType, RenderPosition, ModelType, FilterType} from '../const.js';
+import {getFilterRule} from '../utils/trip.js';
 
 export default class Filter {
   constructor(filterContainer, modelStore) {
     this._filterContainer = filterContainer;
     this._filterModel = modelStore.get(ModelType.FILTER);
+    this._pointsModel = modelStore.get(ModelType.POINTS);
     this._currentFilter = null;
 
     this._filterComponent = null;
@@ -17,11 +19,12 @@ export default class Filter {
   }
 
   init() {
+    const filters = this._getFilters();
     this._currentFilter = this._filterModel.getItem();
 
     const prevFilterComponent = this._filterComponent;
 
-    this._filterComponent = new FilterView(this._currentFilter);
+    this._filterComponent = new FilterView(this._currentFilter, filters);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
@@ -43,5 +46,21 @@ export default class Filter {
     }
 
     this._filterModel.setItem(UpdateType.MAJOR, filterType);
+  }
+
+  _getFilters() {
+    const points = this._pointsModel.getItems();
+
+    let filters = {};
+
+    Object
+      .values(FilterType)
+      .forEach((filterTitle) => {
+        const isFilteredTasksExist = points.some(getFilterRule(filterTitle));
+        filters[filterTitle] = isFilteredTasksExist;
+        return;
+      });
+
+    return filters;
   }
 }
