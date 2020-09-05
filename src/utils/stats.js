@@ -1,5 +1,4 @@
-import {StatsType} from '../const';
-import {getTotalEventPrice} from './trip';
+import {StatsType, MoveType} from '../const';
 import moment from 'moment';
 
 const extractValue = (event, statsType) => {
@@ -7,10 +6,14 @@ const extractValue = (event, statsType) => {
 
   switch (statsType) {
     case StatsType.MONEY:
-      result += getTotalEventPrice(event);
+      result += event.basePrice;
       break;
     case StatsType.TRANSPORT:
-      result++;
+      if (Object.values(MoveType).includes(event.type)) {
+        result++;
+      } else {
+        result = null;
+      }
       break;
     case StatsType.TIME_SPENT:
       const startMoment = moment(event.startDate);
@@ -35,7 +38,12 @@ export const calculateStat = (events, statsType) => {
 
   events.forEach((event) => {
     if (!groupedEvents[event.type]) {
-      groupedEvents[event.type] = extractValue(event, statsType);
+
+      const extractedValue = extractValue(event, statsType);
+      if (extractedValue) {
+        groupedEvents[event.type] = extractedValue;
+      }
+
     } else {
       groupedEvents[event.type] += extractValue(event, statsType);
     }
