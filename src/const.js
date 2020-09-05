@@ -85,3 +85,9 @@ export const DefaultValues = {
   FILTER_TYPE: FilterType.EVERYTHING,
   MAIN_NAV: TabNavItem.TABLE,
 };
+
+export const StatsType = {
+  MONEY: `money`,
+  TRANSPORT: `transport`,
+  TIME_SPENT: `time spent`,
+};
