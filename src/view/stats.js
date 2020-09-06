@@ -4,22 +4,29 @@ import AbstractView from '../abstract/simple-view.js';
 import {StatsType} from '../const.js';
 import {calculateStat} from '../utils/stats.js';
 
-const BAR_HEIGHT = 46;
+const BAR_HEIGHT = 40;
 
 const renderMoneyChart = (moneyCtx, tripEvents) => {
   const statData = calculateStat(tripEvents, StatsType.MONEY);
+  const statLabel = Object.keys(statData).map((label) => label.toUpperCase().padStart(12));
   moneyCtx.height = BAR_HEIGHT * Object.keys(statData).length;
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: Object.keys(statData),
+      labels: statLabel,
       datasets: [{
         data: Object.values(statData),
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        backgroundColor: `#fff`,
+        hoverBackgroundColor: `#f9f9f9`,
+        borderWidth: 0.5,
+        borderColor: `#33d`,
+        borderSkipped: `none`,
+        anchor: `end`,
+        align: `end`,
+        barThickness: 40,
+        minBarLength: 40,
       }]
     },
     options: {
@@ -31,8 +38,8 @@ const renderMoneyChart = (moneyCtx, tripEvents) => {
           color: `#000000`,
           anchor: `end`,
           align: `start`,
-          formatter: (val) => `€ ${val}`
-        }
+          formatter: (val) => `€ ${val}`,
+        },
       },
       title: {
         display: true,
@@ -52,7 +59,6 @@ const renderMoneyChart = (moneyCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -63,7 +69,6 @@ const renderMoneyChart = (moneyCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 46
         }],
       },
       legend: {
@@ -78,18 +83,25 @@ const renderMoneyChart = (moneyCtx, tripEvents) => {
 
 const renderTransportChart = (transportCtx, tripEvents) => {
   const statData = calculateStat(tripEvents, StatsType.TRANSPORT);
+  const statLabel = Object.keys(statData).map((label) => label.toUpperCase().padStart(12));
   transportCtx.height = BAR_HEIGHT * Object.keys(statData).length;
 
   return new Chart(transportCtx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
-      labels: Object.keys(statData),
+      labels: statLabel,
       datasets: [{
         data: Object.values(statData),
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#ffffff`,
-        anchor: `start`
+        backgroundColor: `#fff`,
+        hoverBackgroundColor: `#f9f9f9`,
+        borderWidth: 0.5,
+        borderColor: `#33d`,
+        borderSkipped: `none`,
+        anchor: `end`,
+        align: `end`,
+        barThickness: 40,
+        minBarLength: 40,
       }]
     },
     options: {
@@ -122,7 +134,6 @@ const renderTransportChart = (transportCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 44,
         }],
         xAxes: [{
           ticks: {
@@ -133,7 +144,6 @@ const renderTransportChart = (transportCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 40
         }],
       },
       legend: {
@@ -148,7 +158,8 @@ const renderTransportChart = (transportCtx, tripEvents) => {
 
 const renderTimeSpendChart = (timeSpendCtx, tripEvents) => {
   const statData = calculateStat(tripEvents, StatsType.TIME_SPENT);
-  const statLabel = Object.keys(statData).map((label) => label.toUpperCase());
+  const statLabel = Object.keys(statData).map((label) => label.toUpperCase().padStart(12));
+  timeSpendCtx.height = BAR_HEIGHT * Object.keys(statData).length;
 
   return new Chart(timeSpendCtx, {
     plugins: [ChartDataLabels],
@@ -157,9 +168,15 @@ const renderTimeSpendChart = (timeSpendCtx, tripEvents) => {
       labels: statLabel,
       datasets: [{
         data: Object.values(statData),
-        backgroundColor: `#ffffff`,
-        hoverBackgroundColor: `#eeee44`,
-        anchor: `start`
+        backgroundColor: `#fff`,
+        hoverBackgroundColor: `#f9f9f9`,
+        borderWidth: 0.5,
+        borderColor: `#33d`,
+        borderSkipped: `none`,
+        anchor: `end`,
+        align: `end`,
+        barThickness: 40,
+        minBarLength: 40,
       }]
     },
     options: {
@@ -192,7 +209,6 @@ const renderTimeSpendChart = (timeSpendCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          barThickness: 40,
         }],
         xAxes: [{
           ticks: {
@@ -203,7 +219,6 @@ const renderTimeSpendChart = (timeSpendCtx, tripEvents) => {
             display: false,
             drawBorder: false
           },
-          minBarLength: 2
         }],
       },
       legend: {
@@ -260,10 +275,6 @@ export default class Stats extends AbstractView {
     const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeSpendCtx = this.getElement().querySelector(`.statistics__chart--time`);
-
-    moneyCtx.height = BAR_HEIGHT * 6;
-    transportCtx.height = BAR_HEIGHT * 4;
-    timeSpendCtx.height = BAR_HEIGHT * 6;
 
     this._moneyChart = renderMoneyChart(moneyCtx, this._tripEvents);
     this._transportChart = renderTransportChart(transportCtx, this._tripEvents);
