@@ -2,12 +2,10 @@ import StoreFactory from './model/store-factory.js';
 import SummaryPresenter from './presenter/summary.js';
 import MenuPresenter from './presenter/menu.js';
 import TripPresenter from './presenter/trip.js';
+import StatsPresenter from './presenter/stats.js';
 import {generateEvent} from './mocks/event.js';
 import {generateDestinations} from './mocks/destinations.js';
 import {generateOffers} from './mocks/offers.js';
-import {render} from './utils/render.js';
-import StatsView from './view/stats.js';
-import {ModelType, RenderPosition} from './const.js';
 
 const TRIP_EVENT_COUNT = 20;
 
@@ -27,10 +25,9 @@ const statsElement = siteMainElement.querySelector(`.page-body__container`);
 const summaryPresenter = new SummaryPresenter(tripMainElement, modelStore);
 const menuPresenter = new MenuPresenter(tripMainElement, modelStore);
 const tripPresenter = new TripPresenter(tripEventsElement, modelStore);
+const statsPresenter = new StatsPresenter(statsElement, modelStore);
 
 summaryPresenter.init();
 menuPresenter.init();
-// tripPresenter.init();
-
-const points = modelStore.get(ModelType.POINTS).getItems();
-render(statsElement, new StatsView(points), RenderPosition.BEFORE_END);
+tripPresenter.init();
+statsPresenter.init();
