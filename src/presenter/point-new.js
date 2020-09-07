@@ -1,12 +1,13 @@
 import {nanoid} from 'nanoid';
 import EventEditorView from '../view/event-editor.js';
 import {remove, render} from '../utils/render.js';
-import {UserAction, UpdateType, RenderPosition} from '../const.js';
+import {UserAction, UpdateType, RenderPosition, ModelType} from '../const.js';
 import {extend} from '../utils/common.js';
 
 export default class PointNew {
-  constructor(pointContainer, changeData) {
+  constructor(pointContainer, modelStore, changeData) {
     this._pointContainer = pointContainer;
+    this._pointNewModel = modelStore.get(ModelType.POINT_NEW);
     this._changeData = changeData;
 
     this._editorComponent = null;
@@ -26,7 +27,7 @@ export default class PointNew {
     this._editorComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._pointContainer, this._editorComponent, RenderPosition.AFTERBEGIN);
+    render(this._pointContainer, this._editorComponent, RenderPosition.AFTER_BEGIN);
 
     document.addEventListener(`keydown`, this._handleEscKeyDown);
   }
@@ -38,6 +39,7 @@ export default class PointNew {
 
     remove(this._editorComponent);
     this._editorComponent = null;
+    this._pointNewModel.setItem(UpdateType.MINOR, null);
 
     document.removeEventListener(`keydown`, this._handleEscKeyDown);
   }

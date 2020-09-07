@@ -262,6 +262,10 @@ main {
     opacity: 1; }
   .trip-filters__filter-label:active {
     opacity: 0.6; }
+  .trip-filters__filter-label--empty {
+    cursor: default; }
+  .trip-filters__filter-label--empty:hover {
+    opacity: 0.6; }
 
 .trip-filters__filter-input:checked + .trip-filters__filter-label {
   opacity: 1;
@@ -926,7 +930,8 @@ main {
 
 .statistics {
   padding-top: 47px;
-  padding-left: 37px; }
+  padding-left: 37px;
+  padding-bottom: 47px; }
 
 .statistics__item:not(:last-child) {
   margin-bottom: 78px; }

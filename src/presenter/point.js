@@ -39,7 +39,7 @@ export default class Point {
     this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevPointComponent === null || prevEditorComponent === null) {
-      render(this._pointContainer, this._pointComponent, RenderPosition.BEFOREEND);
+      render(this._pointContainer, this._pointComponent, RenderPosition.BEFORE_END);
       return;
     }
 

@@ -3,9 +3,9 @@ import ActiveItem from '../abstract/active-item.js';
 import {DefaultValues} from '../const.js';
 
 // eslint-disable-next-line new-cap
-export default class Filter extends Observervable(ActiveItem) {
+export default class Menu extends Observervable(ActiveItem) {
   constructor() {
     super();
-    this._activeItem = DefaultValues.FILTER_TYPE;
+    this._activeItem = DefaultValues.MAIN_NAV;
   }
 }
