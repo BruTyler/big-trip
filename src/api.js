@@ -6,16 +6,26 @@ export default class Api {
     this._authorization = authorization;
   }
 
-  getTasks() {
-    return this._load({url: `tasks`})
+  getPoints() {
+    return this._load({url: `points`})
       .then(Api.toJSON);
   }
 
-  updateTask(task) {
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJSON);
+  }
+
+  getOffers() {
+    return this._load({url: `offers`})
+      .then(Api.toJSON);
+  }
+
+  updatePoint(point) {
     return this._load({
-      url: `tasks/${task.id}`,
+      url: `points/${point.id}`,
       method: HTTPMethod.PUT,
-      body: JSON.stringify(task),
+      body: JSON.stringify(point),
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then(Api.toJSON);
