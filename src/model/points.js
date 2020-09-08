@@ -12,6 +12,12 @@ export default class Points extends Fetchable(Observable(SimpleCollection)) {
     super();
   }
 
+  setItems(updateType, items) {
+    super.setItems(items);
+
+    this._notify(updateType);
+  }
+
   updateItem(updateType, selectedItem) {
     this._items = updateItemById(this._items, selectedItem);
     this._notify(updateType, selectedItem);

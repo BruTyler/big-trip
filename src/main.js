@@ -4,24 +4,14 @@ import SummaryPresenter from './presenter/summary.js';
 import MenuPresenter from './presenter/menu.js';
 import TripPresenter from './presenter/trip.js';
 import StatsPresenter from './presenter/stats.js';
-import {generateEvent} from './mocks/event.js';
-import {generateDestinations} from './mocks/destinations.js';
-import {generateOffers} from './mocks/offers.js';
-import {ModelType} from './const.js';
+import {ModelType, UpdateType} from './const.js';
 
-const TRIP_EVENT_COUNT = 20;
 const AUTHORIZATION = `Basic kTy9gIdsz2317rD`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip/`;
 
-const destinations = generateDestinations();
-const tripOffers = generateOffers();
-const tripEvents = new Array(TRIP_EVENT_COUNT).fill().map(() => generateEvent(destinations, tripOffers));
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const modelStore = StoreFactory.create();
-modelStore.get(ModelType.DESTINATIONS).setItems(destinations);
-modelStore.get(ModelType.OFFERS).setItems(tripOffers);
-modelStore.get(ModelType.POINTS).setItems(tripEvents);
 
 const siteHeaderElement = document.querySelector(`.page-header`);
 const tripMainElement = siteHeaderElement.querySelector(`.trip-main`);
@@ -36,30 +26,34 @@ const tripPresenter = new TripPresenter(tripEventsElement, modelStore);
 const statsPresenter = new StatsPresenter(statsElement, modelStore);
 
 summaryPresenter.init();
-menuPresenter.init();
 tripPresenter.init();
 statsPresenter.init();
 
 api.getPoints()
   .then((points) => {
-    console.log(points);
+    modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, points);
   })
   .catch(() => {
-    console.log(`error`);
+    modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, []);
+  })
+  .finally(() => {
+    menuPresenter.init();
   });
 
 api.getOffers()
   .then((offers) => {
-    console.log(offers);
+    modelStore.get(ModelType.OFFERS).setItems(offers);
   })
   .catch(() => {
-    console.log(`error`);
+    modelStore.get(ModelType.OFFERS).setItems([]);
+    modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, []);
   });
 
 api.getDestinations()
-  .then((fetchedDestinations) => {
-    console.log(fetchedDestinations);
+  .then((destinations) => {
+    modelStore.get(ModelType.DESTINATIONS).setItems(destinations);
   })
   .catch(() => {
-    console.log(`error`);
+    modelStore.get(ModelType.DESTINATIONS).setItems([]);
+    modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, []);
   });
