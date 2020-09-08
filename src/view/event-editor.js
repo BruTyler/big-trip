@@ -96,7 +96,7 @@ const createConcreteDestinationTemplate = (destination) => {
     <div class="event__photos-container">
       <div class="event__photos-tape">
     ${destination.pictures
-      .map((picUrl) => (`<img class="event__photo" src="${picUrl}" alt="Event photo">`))
+      .map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`))
       .join(``)
     }
       </div>
