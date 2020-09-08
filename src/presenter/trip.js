@@ -9,11 +9,11 @@ import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, Model
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
-  constructor(tripEventsContainer, modelStore) {
+  constructor(tripEventsContainer, modelStore, api) {
     this._tripEventsContainer = tripEventsContainer;
     this._pointsModel = modelStore.get(ModelType.POINTS);
-    this._tripOffers = modelStore.get(ModelType.OFFERS).getItems();
-    this._destinations = modelStore.get(ModelType.DESTINATIONS).getItems();
+    this._tripOffersModel = modelStore.get(ModelType.OFFERS);
+    this._destinationsModel = modelStore.get(ModelType.DESTINATIONS);
     this._filterModel = modelStore.get(ModelType.FILTER);
     this._pointNewModel = modelStore.get(ModelType.POINT_NEW);
     this._menuModel = modelStore.get(ModelType.MENU);
@@ -22,6 +22,7 @@ export default class Trip {
     this._dayStorage = Object.create(null);
     this._pointStorage = Object.create(null);
     this._isLoading = true;
+    this._api = api;
 
     this._eventSorterComponent = null;
     this._noPointsComponent = null;
@@ -61,7 +62,7 @@ export default class Trip {
     }
 
     this._currentSortType = DefaultValues.SORT_TYPE;
-    this._pointNewPresenter.init(this._destinations, this._tripOffers);
+    this._pointNewPresenter.init(this._destinationsModel.getItems(), this._tripOffersModel.getItems());
   }
 
   _getPoints() {
@@ -82,7 +83,9 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updateItem(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updateItem(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addItem(updateType, update);
@@ -163,7 +166,7 @@ export default class Trip {
 
   _renderSinglePoint(pointContainer, tripEvent) {
     const point = new PointPresenter(pointContainer, this._handleViewAction, this._handleModeChange);
-    point.init(tripEvent, this._destinations, this._tripOffers);
+    point.init(tripEvent, this._destinationsModel.getItems(), this._tripOffersModel.getItems());
     this._pointStorage[tripEvent.id] = point;
   }
 

@@ -140,7 +140,6 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
 
   const availableOffers = defineAvailableOffers(type, tripOffers);
 
-
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">

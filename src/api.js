@@ -31,10 +31,11 @@ export default class Api {
     return this._load({
       url: `points/${point.id}`,
       method: HTTPMethod.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(PointsModel.adaptToServer(point)),
       headers: new Headers({"Content-Type": `application/json`})
     })
-      .then(Api.toJSON);
+      .then(Api.toJSON)
+      .then(PointsModel.adaptToClient);
   }
 
   _load({
