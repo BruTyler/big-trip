@@ -57,7 +57,7 @@ const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
     ${availableOffers
       .map((singleOffer) => createOfferItemTemplate(
           singleOffer,
-          selectedOffers.includes(singleOffer)
+          selectedOffers.some((selectedOffer) => selectedOffer.title === singleOffer.title)
       ))
       .join(``)
     }
