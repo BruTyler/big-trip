@@ -57,6 +57,8 @@ export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
+  INIT: `INIT`,
+  CRASH: `CRASH`,
 };
 
 export const TabNavItem = {
@@ -80,7 +82,7 @@ export const ModelType = {
 };
 
 export const DefaultValues = {
-  POINT_ID: 0,
+  POINT_ID: null,
   SORT_TYPE: SortType.EVENT,
   FILTER_TYPE: FilterType.EVERYTHING,
   MAIN_NAV: TabNavItem.TABLE,
@@ -90,4 +92,22 @@ export const StatsType = {
   MONEY: `money`,
   TRANSPORT: `transport`,
   TIME_SPENT: `time spent`,
+};
+
+export const HTTPMethod = {
+  GET: `GET`,
+  PUT: `PUT`,
+  POST: `POST`,
+  DELETE: `DELETE`,
+};
+
+export const SuccessHTTPStatusRange = {
+  MIN: 200,
+  MAX: 299
+};
+
+export const MessageText = {
+  CRASH: `Oops, something went wrong. Try again later`,
+  NO_POINTS: `Click New Event to create your first point`,
+  LOADING: `Loading...`
 };

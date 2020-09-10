@@ -57,7 +57,7 @@ const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
     ${availableOffers
       .map((singleOffer) => createOfferItemTemplate(
           singleOffer,
-          selectedOffers.includes(singleOffer)
+          selectedOffers.some((selectedOffer) => selectedOffer.title === singleOffer.title)
       ))
       .join(``)
     }
@@ -96,7 +96,7 @@ const createConcreteDestinationTemplate = (destination) => {
     <div class="event__photos-container">
       <div class="event__photos-tape">
     ${destination.pictures
-      .map((picUrl) => (`<img class="event__photo" src="${picUrl}" alt="Event photo">`))
+      .map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`))
       .join(``)
     }
       </div>
@@ -139,7 +139,6 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
   } = eventItem;
 
   const availableOffers = defineAvailableOffers(type, tripOffers);
-
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">

@@ -1,11 +1,21 @@
+/* eslint-disable camelcase */
 import {ObserverDecorator as Observable} from '../abstract/observer.js';
+import {AdapterDecorator as Fetchable} from '../abstract/fetch-adapter.js';
 import SimpleCollection from '../abstract/simple-collection.js';
 import {updateItem as updateItemById, addItem as addItemById, deleteItem as deleteItemById} from '../utils/collection.js';
+import Offers from './offers.js';
+import Destinations from './destinations.js';
 
 // eslint-disable-next-line new-cap
-export default class Points extends Observable(SimpleCollection) {
+export default class Points extends Fetchable(Observable(SimpleCollection)) {
   constructor() {
     super();
+  }
+
+  setItems(updateType, items) {
+    super.setItems(items);
+
+    this._notify(updateType);
   }
 
   updateItem(updateType, selectedItem) {
@@ -21,5 +31,35 @@ export default class Points extends Observable(SimpleCollection) {
   deleteItem(updateType, selectedItem) {
     this._items = deleteItemById(this._items, selectedItem);
     this._notify(updateType);
+  }
+
+  static adaptToClient(point) {
+    const {id, type, base_price, date_from, date_to, destination, is_favorite, offers} = point;
+
+    return {
+      id,
+      type,
+      basePrice: base_price,
+      startDate: new Date(date_from),
+      endDate: new Date(date_to),
+      offers: offers.map((singleOffer) => Offers.adaptToClient(singleOffer)),
+      destination: Destinations.adaptToClient(destination),
+      isFavorite: is_favorite,
+    };
+  }
+
+  static adaptToServer(point) {
+    const {id, type, basePrice, startDate, endDate, destination, isFavorite, offers} = point;
+
+    return {
+      id,
+      type,
+      base_price: basePrice,
+      date_from: startDate.toISOString(),
+      date_to: endDate.toISOString(),
+      offers: offers.map((singleOffer) => Offers.adaptToServer(singleOffer)),
+      destination: Destinations.adaptToServer(destination),
+      is_favorite: isFavorite,
+    };
   }
 }

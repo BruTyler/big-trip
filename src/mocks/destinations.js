@@ -16,7 +16,10 @@ const getRandomPictures = () => {
   const pictureCount = generateRandomInt(1, 5);
   return new Array(pictureCount)
     .fill()
-    .map(() => `http://picsum.photos/248/152?r=${Math.random()}`);
+    .map(() => ({
+      src: `http://picsum.photos/248/152?r=${Math.random()}`,
+      description: null,
+    }));
 };
 
 const cities = [`Geneva`, `Chamonix`, `Amsterdam`, `Moscow`];
