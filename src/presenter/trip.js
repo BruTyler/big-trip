@@ -2,8 +2,6 @@ import PointPresenter from './point.js';
 import PointNewPresenter from './point-new.js';
 import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
-import NoPointsView from '../view/no-points.js';
-import LoadingView from '../view/loading.js';
 import EventMsgView from '../view/event-msg.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
 import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText} from '../const.js';
@@ -27,9 +25,7 @@ export default class Trip {
     this._api = api;
 
     this._eventSorterComponent = null;
-    this._noPointsComponent = null;
     this._msgComponent = null;
-    this._loadingComponent = new LoadingView();
 
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -160,19 +156,6 @@ export default class Trip {
     render(this._tripEventsContainer, this._eventSorterComponent, RenderPosition.BEFORE_END);
   }
 
-  _renderLoading() {
-    render(this._tripEventsContainer, this._loadingComponent, RenderPosition.AFTER_BEGIN);
-  }
-
-  _renderNoPoints() {
-    if (this._noPointsComponent !== null) {
-      this._noPointsComponent = null;
-    }
-
-    this._noPointsComponent = new NoPointsView();
-    render(this._tripEventsContainer, this._noPointsComponent, RenderPosition.AFTER_BEGIN);
-  }
-
   _renderMsg(msgText) {
     if (this._msgComponent !== null) {
       this._msgComponent = null;
@@ -217,7 +200,7 @@ export default class Trip {
 
   _renderTripBoard() {
     if (this._isLoading) {
-      this._renderLoading();
+      this._renderMsg(MessageText.LOADING);
       return;
     }
 
@@ -227,7 +210,7 @@ export default class Trip {
     }
 
     if (this._getPoints().length === 0) {
-      this._renderNoPoints();
+      this._renderMsg(MessageText.NO_POINTS);
       return;
     }
 
@@ -242,9 +225,7 @@ export default class Trip {
 
     this._pointNewPresenter.destroy();
     this._clearChainPoints();
-    remove(this._noPointsComponent);
     remove(this._eventSorterComponent);
-    remove(this._loadingComponent);
     remove(this._msgComponent);
   }
 }
