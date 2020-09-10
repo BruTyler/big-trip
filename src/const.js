@@ -58,6 +58,7 @@ export const UpdateType = {
   MINOR: `MINOR`,
   MAJOR: `MAJOR`,
   INIT: `INIT`,
+  CRASH: `CRASH`,
 };
 
 export const TabNavItem = {
@@ -103,4 +104,10 @@ export const HTTPMethod = {
 export const SuccessHTTPStatusRange = {
   MIN: 200,
   MAX: 299
+};
+
+export const MessageText = {
+  CRASH: `Oops, something went wrong. Try again later`,
+  NO_POINTS: `Click New Event to create your first point`,
+  LOADING: `Loading...`
 };

@@ -29,26 +29,19 @@ summaryPresenter.init();
 tripPresenter.init();
 statsPresenter.init();
 
-const destinationsPromise = api.getDestinations()
-  .then((destinations) => {
+const fetchedDataPromises = [
+  api.getDestinations(),
+  api.getOffers(),
+  api.getPoints()
+];
+
+Promise.all(fetchedDataPromises)
+  .then(([destinations, offers, points]) => {
     modelStore.get(ModelType.DESTINATIONS).setItems(destinations);
-  });
-
-const offersPromise = api.getOffers()
-  .then((offers) => {
     modelStore.get(ModelType.OFFERS).setItems(offers);
-  });
-
-const pointsPromise = api.getPoints()
-  .then((points) => {
     modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, points);
-  })
-  ;
-
-Promise.all([destinationsPromise, offersPromise, pointsPromise])
-  .catch(() => {
-    modelStore.get(ModelType.POINTS).setItems(UpdateType.INIT, []);
-  })
-  .finally(() => {
     menuPresenter.init();
+  })
+  .catch(() => {
+    modelStore.get(ModelType.POINTS).setItems(UpdateType.CRASH, []);
   });

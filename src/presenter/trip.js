@@ -4,8 +4,9 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import NoPointsView from '../view/no-points.js';
 import LoadingView from '../view/loading.js';
+import EventMsgView from '../view/event-msg.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
@@ -22,10 +23,12 @@ export default class Trip {
     this._dayStorage = Object.create(null);
     this._pointStorage = Object.create(null);
     this._isLoading = true;
+    this._isCrashed = false;
     this._api = api;
 
     this._eventSorterComponent = null;
     this._noPointsComponent = null;
+    this._msgComponent = null;
     this._loadingComponent = new LoadingView();
 
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -111,7 +114,13 @@ export default class Trip {
         break;
       case UpdateType.INIT:
         this._isLoading = false;
-        remove(this._loadingComponent);
+        this._isCrashed = false;
+        this._clearTripBoard({resetSortType: true});
+        this._renderTripBoard();
+        break;
+      case UpdateType.CRASH:
+        this._isLoading = false;
+        this._isCrashed = true;
         this._clearTripBoard({resetSortType: true});
         this._renderTripBoard();
         break;
@@ -164,6 +173,15 @@ export default class Trip {
     render(this._tripEventsContainer, this._noPointsComponent, RenderPosition.AFTER_BEGIN);
   }
 
+  _renderMsg(msgText) {
+    if (this._msgComponent !== null) {
+      this._msgComponent = null;
+    }
+
+    this._msgComponent = new EventMsgView(msgText);
+    render(this._tripEventsContainer, this._msgComponent, RenderPosition.AFTER_BEGIN);
+  }
+
   _renderSinglePoint(pointContainer, tripEvent) {
     const point = new PointPresenter(pointContainer, this._handleViewAction, this._handleModeChange);
     point.init(tripEvent, this._destinationsModel.getItems(), this._tripOffersModel.getItems());
@@ -203,6 +221,11 @@ export default class Trip {
       return;
     }
 
+    if (this._isCrashed) {
+      this._renderMsg(MessageText.CRASH);
+      return;
+    }
+
     if (this._getPoints().length === 0) {
       this._renderNoPoints();
       return;
@@ -222,5 +245,6 @@ export default class Trip {
     remove(this._noPointsComponent);
     remove(this._eventSorterComponent);
     remove(this._loadingComponent);
+    remove(this._msgComponent);
   }
 }
