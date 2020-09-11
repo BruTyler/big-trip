@@ -88,7 +88,7 @@ export default class Trip {
             this._pointsModel.updateItem(updateType, response);
           })
           .catch(() => {
-            this._pointPresenter[update.id].setEditState(EditState.ABORTED);
+            this._pointStorage[update.id].setEditState(EditState.ABORTED);
           });
         break;
       case UserAction.ADD_POINT:
@@ -106,7 +106,7 @@ export default class Trip {
             this._pointsModel.deleteItem(updateType, update);
           })
           .catch(() => {
-            this._pointPresenter[update.id].setEditState(EditState.ABORTED);
+            this._pointStorage[update.id].setEditState(EditState.ABORTED);
           });
         break;
     }

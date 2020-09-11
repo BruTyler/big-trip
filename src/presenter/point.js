@@ -71,7 +71,11 @@ export default class Point {
       return;
     }
 
-    this._editorComponent.setEditState(editState);
+    const resetFormState = () => {
+      this._editorComponent.setEditState(editState);
+    };
+
+    this._editorComponent.shake(resetFormState);
   }
 
   _replacePointToEditor() {

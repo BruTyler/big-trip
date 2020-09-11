@@ -47,7 +47,11 @@ export default class PointNew {
       return;
     }
 
-    this._editorComponent.setEditState(editState);
+    const resetFormState = () => {
+      this._editorComponent.setEditState(editState);
+    };
+
+    this._editorComponent.shake(resetFormState);
   }
 
   _handleFormSubmit(point) {
