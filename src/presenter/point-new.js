@@ -1,6 +1,6 @@
 import EventEditorView from '../view/event-editor.js';
 import {remove, render} from '../utils/render.js';
-import {UserAction, UpdateType, RenderPosition, ModelType} from '../const.js';
+import {UserAction, UpdateType, RenderPosition, ModelType, EditState} from '../const.js';
 
 export default class PointNew {
   constructor(pointContainer, modelStore, changeData) {
@@ -40,6 +40,14 @@ export default class PointNew {
     this._pointNewModel.setItem(UpdateType.MINOR, null);
 
     document.removeEventListener(`keydown`, this._handleEscKeyDown);
+  }
+
+  setEditState(editState) {
+    if (this._editorComponent === null || editState !== EditState.ABORTED) {
+      return;
+    }
+
+    this._editorComponent.setEditState(editState);
   }
 
   _handleFormSubmit(point) {

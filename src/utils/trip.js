@@ -93,3 +93,5 @@ export const defineAvailableOffers = (eventType, tripOffers) => {
 
   return tripOffers.find((x) => x.type === eventType).offers;
 };
+
+export const isPendingState = (editState) => (editState < 0);

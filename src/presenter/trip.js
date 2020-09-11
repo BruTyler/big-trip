@@ -4,7 +4,7 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import EventMsgView from '../view/event-msg.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText, EditState} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
@@ -86,18 +86,27 @@ export default class Trip {
         this._api.updatePoint(update)
           .then((response) => {
             this._pointsModel.updateItem(updateType, response);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setEditState(EditState.ABORTED);
           });
         break;
       case UserAction.ADD_POINT:
         this._api.addPoint(update)
           .then((response) => {
             this._pointsModel.addItem(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setEditState(EditState.ABORTED);
           });
         break;
       case UserAction.DELETE_POINT:
         this._api.deletePoint(update)
           .then(() => {
             this._pointsModel.deleteItem(updateType, update);
+          })
+          .catch(() => {
+            this._pointPresenter[update.id].setEditState(EditState.ABORTED);
           });
         break;
     }
