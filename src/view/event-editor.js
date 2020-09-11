@@ -104,6 +104,16 @@ const createConcreteDestinationTemplate = (destination) => {
   );
 };
 
+const createSubmitButtonTemplate = (isSubmitDisabled) => {
+  return (
+    `<button class="event__save-btn  btn  btn--blue" type="submit"
+      ${isSubmitDisabled ? `disabled` : ``}
+    >
+      Save
+    </button>`
+  );
+};
+
 const createResetButtonTemplate = (pointId) => {
   return `<button class="event__reset-btn" type="reset">${pointId === DefaultValues.POINT_ID ? `Cancel` : `Delete`}</button>`;
 };
@@ -138,7 +148,9 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
     startDate, endDate, isFavorite
   } = eventItem;
 
+  const priceValue = isNaN(basePrice) ? `` : basePrice;
   const availableOffers = defineAvailableOffers(type, tripOffers);
+  const isSubmitDisabled = isNaN(basePrice) || destination.name === ``;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -190,12 +202,11 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${basePrice}" autocomplete="off">
+          <input class="event__input  event__input--price" id="event-price" type="number" min="1" name="event-price" value="${priceValue}" autocomplete="off">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        ${createSubmitButtonTemplate(isSubmitDisabled)}
         ${createResetButtonTemplate(id)}
-
         ${createFavoriteButtonTemplate(id, isFavorite)}
         ${createRollupButtonTemplate(id)}
       </header>
@@ -295,6 +306,7 @@ export default class EventEditor extends SmartView {
             enableTime: true,
             // eslint-disable-next-line camelcase
             time_24hr: true,
+            minDate: pickerKey === `end` ? this._item.startDate : new Date(2000, 1, 1),
             onChange: (evt) => this._dateChangeHandler(evt, `${pickerKey}Date`),
           }
       );
@@ -305,14 +317,25 @@ export default class EventEditor extends SmartView {
     if (selectedDate) {
       const updatedProperty = Object.create(null);
       updatedProperty[dateKey] = selectedDate;
-      this.updateData(updatedProperty, true);
+      let isRenderActual = true;
+
+      if (dateKey === `startDate`) {
+        isRenderActual = false;
+      }
+
+      if (dateKey === `startDate` && moment(selectedDate).isAfter(this._item.endDate)) {
+        updatedProperty[`endDate`] = selectedDate;
+      }
+
+      this.updateData(updatedProperty, isRenderActual);
     }
   }
 
   _priceInputHandler(evt) {
     evt.preventDefault();
     const basePrice = parseInt(evt.target.value, 10);
-    this.updateData({basePrice}, true);
+    const isRenderActual = !(isNaN(basePrice) || isNaN(this._item.basePrice));
+    this.updateData({basePrice}, isRenderActual);
   }
 
   _typeClickHandler(evt) {
