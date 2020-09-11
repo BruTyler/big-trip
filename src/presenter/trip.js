@@ -60,6 +60,7 @@ export default class Trip {
       return;
     }
 
+    this._handleModeChange();
     this._currentSortType = DefaultValues.SORT_TYPE;
     this._pointNewPresenter.init(this._destinationsModel.getItems(), this._tripOffersModel.getItems());
   }
