@@ -1,8 +1,6 @@
-import {nanoid} from 'nanoid';
 import EventEditorView from '../view/event-editor.js';
 import {remove, render} from '../utils/render.js';
 import {UserAction, UpdateType, RenderPosition, ModelType} from '../const.js';
-import {extend} from '../utils/common.js';
 
 export default class PointNew {
   constructor(pointContainer, modelStore, changeData) {
@@ -48,9 +46,8 @@ export default class PointNew {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MAJOR,
-        extend(point, {id: nanoid(5)})
+        point
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
