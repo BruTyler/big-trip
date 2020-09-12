@@ -47,6 +47,14 @@ export const PointMode = {
   EDITING: `EDITING`
 };
 
+export const EditState = {
+  SAVING: -2,
+  DELETING: -1,
+  DEFAULT: 1,
+  ABORTED: 2,
+  SUCCEED: 3,
+};
+
 export const UserAction = {
   UPDATE_POINT: `UPDATE_POINT`,
   ADD_POINT: `ADD_POINT`,

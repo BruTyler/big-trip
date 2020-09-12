@@ -1,9 +1,9 @@
 import moment from 'moment';
 import flatpickr from 'flatpickr';
 import SmartView from '../abstract/smart-view.js';
-import {EventType, MoveType, ActivityType, DefaultValues} from '../const.js';
+import {EventType, MoveType, ActivityType, DefaultValues, EditState} from '../const.js';
 import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
-import {pickEventPretext, defineDestination, defineAvailableOffers} from '../utils/trip.js';
+import {pickEventPretext, defineDestination, defineAvailableOffers, isPendingState} from '../utils/trip.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
@@ -45,7 +45,7 @@ const createDestinationItemsTemplate = (destinations, currentDestination, pointI
   return destinationOptions.join(``);
 };
 
-const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
+const createAvailableOffersTemplate = (availableOffers, selectedOffers, isDisabled) => {
   if (availableOffers.length === 0) {
     return ``;
   }
@@ -57,7 +57,8 @@ const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
     ${availableOffers
       .map((singleOffer) => createOfferItemTemplate(
           singleOffer,
-          selectedOffers.some((selectedOffer) => selectedOffer.title === singleOffer.title)
+          selectedOffers.some((selectedOffer) => selectedOffer.title === singleOffer.title),
+          isDisabled
       ))
       .join(``)
     }
@@ -65,7 +66,7 @@ const createAvailableOffersTemplate = (availableOffers, selectedOffers) => {
   );
 };
 
-const createOfferItemTemplate = (offer, isChecked) => {
+const createOfferItemTemplate = (offer, isChecked, isDisabled) => {
   const shortTitle = transformToStringId(offer.title);
 
   return (
@@ -74,6 +75,7 @@ const createOfferItemTemplate = (offer, isChecked) => {
         name="event-offer-${shortTitle}" 
         value="${offer.title}" 
         ${isChecked ? `checked` : ``}
+        ${isDisabled ? `disabled` : ``}
       >
       <label class="event__offer-label" for="event-offer-${shortTitle}">
         <span class="event__offer-title">${offer.title}</span>
@@ -104,8 +106,31 @@ const createConcreteDestinationTemplate = (destination) => {
   );
 };
 
-const createResetButtonTemplate = (pointId) => {
-  return `<button class="event__reset-btn" type="reset">${pointId === DefaultValues.POINT_ID ? `Cancel` : `Delete`}</button>`;
+const createSubmitButtonTemplate = (isDisabled, editState) => {
+  return (
+    `<button class="event__save-btn  btn  btn--blue" type="submit"
+      ${isDisabled ? `disabled` : ``}
+    >
+      ${editState === EditState.SAVING ? `Saving...` : `Save`} 
+    </button>`
+  );
+};
+
+const createResetButtonTemplate = (pointId, isDisabled, editState) => {
+  let buttonLabel = `Delete`;
+
+  if (pointId === DefaultValues.POINT_ID) {
+    buttonLabel = `Cancel`;
+  }
+
+  if (editState === EditState.DELETING) {
+    buttonLabel = `Deleting...`;
+  }
+  return (
+    `<button class="event__reset-btn" type="reset" ${isDisabled ? `disabled` : ``}>
+      ${buttonLabel}
+    </button>`
+  );
 };
 
 const createFavoriteButtonTemplate = (pointId, isFavorite) => {
@@ -132,13 +157,16 @@ const createRollupButtonTemplate = (pointId) => {
   </button>`;
 };
 
-const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
+const createEventEditorTemplate = (eventItem, destinations, tripOffers, editState) => {
   const {
     id, destination, type, basePrice, offers: selectedOffers,
     startDate, endDate, isFavorite
   } = eventItem;
 
+  const isInterfaceDisabled = isPendingState(editState);
+  const priceValue = isNaN(basePrice) ? `` : basePrice;
   const availableOffers = defineAvailableOffers(type, tripOffers);
+  const isSubmitDisabled = isNaN(basePrice) || destination.name === `` || isInterfaceDisabled;
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -148,7 +176,9 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox">
+          <input class="event__type-toggle  visually-hidden" id="event-type-toggle" type="checkbox" 
+            ${isInterfaceDisabled ? `disabled` : ``}
+          >
 
           <div class="event__type-list">
             <fieldset class="event__type-group">
@@ -166,7 +196,10 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
           <label class="event__label  event__type-output" for="event-destination">
             ${capitilizeFirstLetter(type)} ${pickEventPretext(type)}
           </label>
-          <select class="event__input  event__input--destination" id="event-destination" name="event-destination" value="${destination.name}" list="destination-list">
+          <select class="event__input  event__input--destination" id="event-destination" 
+            name="event-destination" value="${destination.name}" list="destination-list"
+            ${isInterfaceDisabled ? `disabled` : ``}
+          >
             <datalist id="destination-list">
               ${createDestinationItemsTemplate(destinations, destination, id)}
             </datalist>
@@ -177,12 +210,16 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
           <label class="visually-hidden" for="event-start-time">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" value="${moment(startDate).format(`DD/MM/YY HH:mm`)}">
+          <input class="event__input  event__input--time" id="event-start-time" type="text" name="event-start-time" 
+            value="${moment(startDate).format(`DD/MM/YY HH:mm`)} ${isInterfaceDisabled ? `disabled` : ``}"
+          >
           —
           <label class="visually-hidden" for="event-end-time">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" value="${moment(endDate).format(`DD/MM/YY HH:mm`)}">
+          <input class="event__input  event__input--time" id="event-end-time" type="text" name="event-end-time" 
+            value="${moment(endDate).format(`DD/MM/YY HH:mm`)} ${isInterfaceDisabled ? `disabled` : ``}"
+          >
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -190,18 +227,20 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers) => {
             <span class="visually-hidden">Price</span>
             €
           </label>
-          <input class="event__input  event__input--price" id="event-price" type="number" name="event-price" value="${basePrice}" autocomplete="off">
+          <input class="event__input  event__input--price" id="event-price" type="number" min="1" name="event-price" 
+            value="${priceValue}" autocomplete="off"
+            ${isInterfaceDisabled ? `disabled` : ``}
+          >
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        ${createResetButtonTemplate(id)}
-
+        ${createSubmitButtonTemplate(isSubmitDisabled, editState)}
+        ${createResetButtonTemplate(id, isInterfaceDisabled, editState)}
         ${createFavoriteButtonTemplate(id, isFavorite)}
         ${createRollupButtonTemplate(id)}
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
-          ${createAvailableOffersTemplate(availableOffers, selectedOffers)}
+          ${createAvailableOffersTemplate(availableOffers, selectedOffers, isInterfaceDisabled)}
         </section>
         <section class="event__section  event__section--destination">
           ${createConcreteDestinationTemplate(destination)}
@@ -223,6 +262,8 @@ export default class EventEditor extends SmartView {
       start: null,
       end: null
     };
+
+    this._editState = EditState.DEFAULT;
 
     this._dateChangeHandler = this._dateChangeHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
@@ -247,11 +288,12 @@ export default class EventEditor extends SmartView {
   }
 
   reset() {
+    this._editState = EditState.DEFAULT;
     this.updateData(this._sourceItem);
   }
 
   getTemplate() {
-    return createEventEditorTemplate(this._item, this._destinations, this._tripOffers);
+    return createEventEditorTemplate(this._item, this._destinations, this._tripOffers, this._editState);
   }
 
   restoreHandlers() {
@@ -280,6 +322,11 @@ export default class EventEditor extends SmartView {
       .addEventListener(`change`, this._destinationInputHandler);
   }
 
+  setEditState(state) {
+    this._editState = state;
+    this.updateElement();
+  }
+
   _setDatepickers() {
     Object.entries(this._datepickers).forEach(([pickerKey, pickerInstance]) => {
       if (pickerInstance) {
@@ -295,6 +342,7 @@ export default class EventEditor extends SmartView {
             enableTime: true,
             // eslint-disable-next-line camelcase
             time_24hr: true,
+            minDate: pickerKey === `end` ? this._item.startDate : new Date(2000, 1, 1),
             onChange: (evt) => this._dateChangeHandler(evt, `${pickerKey}Date`),
           }
       );
@@ -305,14 +353,25 @@ export default class EventEditor extends SmartView {
     if (selectedDate) {
       const updatedProperty = Object.create(null);
       updatedProperty[dateKey] = selectedDate;
-      this.updateData(updatedProperty, true);
+      let isRenderActual = true;
+
+      if (dateKey === `startDate`) {
+        isRenderActual = false;
+      }
+
+      if (dateKey === `startDate` && moment(selectedDate).isAfter(this._item.endDate)) {
+        updatedProperty[`endDate`] = selectedDate;
+      }
+
+      this.updateData(updatedProperty, isRenderActual);
     }
   }
 
   _priceInputHandler(evt) {
     evt.preventDefault();
     const basePrice = parseInt(evt.target.value, 10);
-    this.updateData({basePrice}, true);
+    const isRenderActual = !(isNaN(basePrice) || isNaN(this._item.basePrice));
+    this.updateData({basePrice}, isRenderActual);
   }
 
   _typeClickHandler(evt) {
@@ -374,6 +433,7 @@ export default class EventEditor extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    this.setEditState(EditState.SAVING);
     this._defineSelectedOffers();
     this._sourceItem = this._item;
     this._callback.formSubmit(this._item);
@@ -381,6 +441,7 @@ export default class EventEditor extends SmartView {
 
   _deleteClickHandler(evt) {
     evt.preventDefault();
+    this.setEditState(EditState.DELETING);
     this._callback.deleteClick();
   }
 

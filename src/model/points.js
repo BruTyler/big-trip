@@ -34,7 +34,7 @@ export default class Points extends Fetchable(Observable(SimpleCollection)) {
   }
 
   static adaptToClient(point) {
-    const {id, type, base_price, date_from, date_to, destination, is_favorite, offers} = point;
+    const {id, type, base_price, date_from, date_to, destination, is_favorite, offers = []} = point;
 
     return {
       id,

@@ -4,7 +4,7 @@ import EventSorterView from '../view/event-sorter.js';
 import EventDayView from '../view/event-day.js';
 import EventMsgView from '../view/event-msg.js';
 import {getSorterRule, groupEvents, convertToNullableDate, getFilterRule} from '../utils/trip.js';
-import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText} from '../const.js';
+import {RenderPosition, DefaultValues, UpdateType, UserAction, FilterType, ModelType, TabNavItem, MessageText, EditState} from '../const.js';
 import {render, remove} from '../utils/render.js';
 
 export default class Trip {
@@ -60,6 +60,7 @@ export default class Trip {
       return;
     }
 
+    this._handleModeChange();
     this._currentSortType = DefaultValues.SORT_TYPE;
     this._pointNewPresenter.init(this._destinationsModel.getItems(), this._tripOffersModel.getItems());
   }
@@ -82,15 +83,31 @@ export default class Trip {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._api.updatePoint(update).then((response) => {
-          this._pointsModel.updateItem(updateType, response);
-        });
+        this._api.updatePoint(update)
+          .then((response) => {
+            this._pointsModel.updateItem(updateType, response);
+          })
+          .catch(() => {
+            this._pointStorage[update.id].setEditState(EditState.ABORTED);
+          });
         break;
       case UserAction.ADD_POINT:
-        this._pointsModel.addItem(updateType, update);
+        this._api.addPoint(update)
+          .then((response) => {
+            this._pointsModel.addItem(updateType, response);
+          })
+          .catch(() => {
+            this._pointNewPresenter.setEditState(EditState.ABORTED);
+          });
         break;
       case UserAction.DELETE_POINT:
-        this._pointsModel.deleteItem(updateType, update);
+        this._api.deletePoint(update)
+          .then(() => {
+            this._pointsModel.deleteItem(updateType, update);
+          })
+          .catch(() => {
+            this._pointStorage[update.id].setEditState(EditState.ABORTED);
+          });
         break;
     }
   }

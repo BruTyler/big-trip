@@ -1,6 +1,6 @@
 import EventEditorView from '../view/event-editor.js';
 import EventPointView from '../view/event-point.js';
-import {RenderPosition, PointMode, UpdateType, UserAction} from '../const.js';
+import {RenderPosition, PointMode, UpdateType, UserAction, EditState} from '../const.js';
 import {render, replace, remove} from '../utils/render.js';
 
 export default class Point {
@@ -61,6 +61,23 @@ export default class Point {
     }
   }
 
+  setEditState(editState) {
+    if (this._editorComponent === null) {
+      return;
+    }
+
+    if (editState === EditState.SUCCEED) {
+      this._replaceEditorToPoint();
+      return;
+    }
+
+    const resetFormState = () => {
+      this._editorComponent.setEditState(editState);
+    };
+
+    this._editorComponent.shake(resetFormState);
+  }
+
   _replacePointToEditor() {
     replace(this._editorComponent, this._pointComponent);
     document.addEventListener(`keydown`, this._handleEscKeyDown);
@@ -101,6 +118,5 @@ export default class Point {
 
   _handleFormSubmit(updatedPoint) {
     this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, updatedPoint);
-    this._replaceEditorToPoint();
   }
 }
