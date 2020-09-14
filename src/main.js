@@ -1,5 +1,5 @@
 import StoreFactory from './model/store-factory.js';
-import Api from './api.js';
+import Api from './api/index.js';
 import SummaryPresenter from './presenter/summary.js';
 import MenuPresenter from './presenter/menu.js';
 import TripPresenter from './presenter/trip.js';
