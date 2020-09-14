@@ -10,11 +10,11 @@ export default class Stats {
 
     this._statsComponent = null;
 
-    this._handleMenuEvent = this._handleMenuEvent.bind(this);
+    this._menuEventHandler = this._menuEventHandler.bind(this);
   }
 
   init() {
-    this._menuModel.addObserver(this._handleMenuEvent);
+    this._menuModel.addObserver(this._menuEventHandler);
   }
 
   _renderStats() {
@@ -35,7 +35,7 @@ export default class Stats {
     this._statsComponent = null;
   }
 
-  _handleMenuEvent(_event, menuItem) {
+  _menuEventHandler(_event, menuItem) {
     switch (menuItem) {
       case TabNavItem.STATS:
         this._renderStats();
