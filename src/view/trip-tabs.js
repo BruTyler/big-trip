@@ -1,6 +1,6 @@
 import SmartView from '../abstract/smart-view.js';
 import {TabNavItem} from '../const.js';
-import {capitilizeFirstLetter} from '../utils/common.js';
+import {capitalizeFirstLetter} from '../utils/common.js';
 
 const createNavTemplate = (currentTab) => {
   return Object
@@ -10,7 +10,7 @@ const createNavTemplate = (currentTab) => {
         class="trip-tabs__btn  ${currentTab === tab ? `trip-tabs__btn--active` : ``}"
         data-tab="${tab}"
       >
-        ${capitilizeFirstLetter(tab)}
+        ${capitalizeFirstLetter(tab)}
       </a>`))
     .join(``);
 };

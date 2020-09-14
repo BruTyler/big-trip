@@ -1,5 +1,5 @@
 import SmartView from '../abstract/smart-view.js';
-import {capitilizeFirstLetter} from '../utils/common.js';
+import {capitalizeFirstLetter} from '../utils/common.js';
 import {SortType} from '../const.js';
 
 const createEventSorterTemplate = (selectedSortType) => {
@@ -14,7 +14,7 @@ const createEventSorterTemplate = (selectedSortType) => {
           ${selectedSortType === sortItem ? `checked` : ``}
         >
         <label class="trip-sort__btn" for="sort-${sortItem}">
-          ${capitilizeFirstLetter(sortItem)}
+          ${capitalizeFirstLetter(sortItem)}
         </label>
       </div>`)
     .join(`\n`);
