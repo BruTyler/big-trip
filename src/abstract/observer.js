@@ -1,4 +1,4 @@
-export const ObserverDecorator = (superclass = Object) => class extends superclass {
+export const mixObserver = (superclass = Object) => class extends superclass {
   constructor() {
     super();
     this._observers = [];
@@ -17,5 +17,4 @@ export const ObserverDecorator = (superclass = Object) => class extends supercla
   }
 };
 
-// eslint-disable-next-line new-cap
-export default ObserverDecorator(Object);
+export default mixObserver(Object);

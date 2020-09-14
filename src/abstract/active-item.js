@@ -1,4 +1,4 @@
-export const ActiveItemDecorator = (superclass = Object) => class extends superclass {
+export const mixActiveItem = (superclass = Object) => class extends superclass {
   constructor() {
     super();
     this._activeItem = null;
@@ -16,5 +16,4 @@ export const ActiveItemDecorator = (superclass = Object) => class extends superc
   }
 };
 
-// eslint-disable-next-line new-cap
-export default ActiveItemDecorator(Object);
+export default mixActiveItem(Object);

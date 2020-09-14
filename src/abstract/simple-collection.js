@@ -1,4 +1,4 @@
-export const SimpleCollectionDecorator = (superclass = Object) => class extends superclass {
+export const mixSimpleCollection = (superclass = Object) => class extends superclass {
   constructor() {
     super();
     this._items = [];
@@ -13,5 +13,4 @@ export const SimpleCollectionDecorator = (superclass = Object) => class extends 
   }
 };
 
-// eslint-disable-next-line new-cap
-export default SimpleCollectionDecorator(Object);
+export default mixSimpleCollection(Object);
