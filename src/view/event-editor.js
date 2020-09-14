@@ -433,9 +433,9 @@ export default class EventEditor extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this.setEditState(EditState.SAVING);
     this._defineSelectedOffers();
     this._sourceItem = this._item;
+    this.setEditState(EditState.SAVING);
     this._callback.formSubmit(this._item);
   }
 

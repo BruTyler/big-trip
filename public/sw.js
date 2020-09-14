@@ -64,7 +64,8 @@ const handleFetch = (evt) => {
 
           return fetch(request)
             .then((response) => {
-              if (!response || response.status !== HTTP_STATUS_OK || response.type !== RESPONSE_SAFE_TYPE) {
+
+              if (!response || response.status !== HTTP_STATUS_OK || response.type !== RESPONSE_SAFE_TYPE || request.method !== `GET`) {
                 return response;
               }
 
