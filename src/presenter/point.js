@@ -13,14 +13,14 @@ export default class Point {
     this._editorComponent = null;
     this._mode = PointMode.DEFAULT;
 
-    this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._replacePointToEditor = this._replacePointToEditor.bind(this);
     this._replaceEditorToPoint = this._replaceEditorToPoint.bind(this);
-    this._handleEditClick = this._handleEditClick.bind(this);
-    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
-    this._handleCancelClick = this._handleCancelClick.bind(this);
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._editClickHandler = this._editClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._cancelClickHandler = this._cancelClickHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
   }
 
   init(tripEvent, destinations, tripOffers) {
@@ -32,11 +32,11 @@ export default class Point {
     this._pointComponent = new EventPointView(this._tripEvent);
     this._editorComponent = new EventEditorView(destinations, tripOffers, this._tripEvent);
 
-    this._pointComponent.setEditClickHandler(this._handleEditClick);
-    this._editorComponent.setCancelClickHandler(this._handleCancelClick);
-    this._editorComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-    this._editorComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._pointComponent.setEditClickHandler(this._editClickHandler);
+    this._editorComponent.setCancelClickHandler(this._cancelClickHandler);
+    this._editorComponent.setFavoriteClickHandler(this._favoriteClickHandler);
+    this._editorComponent.setFormSubmitHandler(this._formSubmitHandler);
+    this._editorComponent.setDeleteClickHandler(this._deleteClickHandler);
 
     if (prevPointComponent === null || prevEditorComponent === null) {
       render(this._pointContainer, this._pointComponent, RenderPosition.BEFORE_END);
@@ -80,43 +80,43 @@ export default class Point {
 
   _replacePointToEditor() {
     replace(this._editorComponent, this._pointComponent);
-    document.addEventListener(`keydown`, this._handleEscKeyDown);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._changeMode();
     this._mode = PointMode.EDITING;
   }
 
   _replaceEditorToPoint() {
     replace(this._pointComponent, this._editorComponent);
-    document.removeEventListener(`keydown`, this._handleEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
     this._mode = PointMode.DEFAULT;
   }
 
-  _handleEscKeyDown(evt) {
+  _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       this._editorComponent.reset();
       this._replaceEditorToPoint();
-      document.removeEventListener(`keydown`, this._handleEscKeyDown);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
     }
   }
 
-  _handleEditClick() {
+  _editClickHandler() {
     this._replacePointToEditor();
   }
 
-  _handleCancelClick() {
+  _cancelClickHandler() {
     this._replaceEditorToPoint();
   }
 
-  _handleDeleteClick() {
+  _deleteClickHandler() {
     this._changeData(UserAction.DELETE_POINT, UpdateType.MAJOR, this._tripEvent);
   }
 
-  _handleFavoriteClick(updatedPoint) {
+  _favoriteClickHandler(updatedPoint) {
     this._changeData(UserAction.UPDATE_POINT, UpdateType.PATCH, updatedPoint);
   }
 
-  _handleFormSubmit(updatedPoint) {
+  _formSubmitHandler(updatedPoint) {
     this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, updatedPoint);
   }
 }

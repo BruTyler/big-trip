@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export const capitilizeFirstLetter = (word) => {
+export const capitalizeFirstLetter = (word) => {
   return word.slice(0, 1).toUpperCase() + word.slice(1);
 };
 
@@ -48,6 +48,6 @@ export const humanizeDuration = (endDate, startDate) => {
   return readableDurations.join(` `);
 };
 
-export const extend = (objectA, objectB) => {
-  return Object.assign({}, objectA, objectB);
+export const extend = (baseItem, updatedItem) => {
+  return Object.assign({}, baseItem, updatedItem);
 };

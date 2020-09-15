@@ -2,7 +2,7 @@ import moment from 'moment';
 import flatpickr from 'flatpickr';
 import SmartView from '../abstract/smart-view.js';
 import {EventType, MoveType, ActivityType, DefaultValues, EditState} from '../const.js';
-import {capitilizeFirstLetter, transformToStringId} from '../utils/common.js';
+import {capitalizeFirstLetter, transformToStringId} from '../utils/common.js';
 import {pickEventPretext, defineDestination, defineAvailableOffers, isPendingState} from '../utils/trip.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -24,7 +24,7 @@ const createEventTypesTemplate = (selectedEventType) => {
     .map((type) => (
       `<div class="event__type-item">
         <input id="event-type-${type}" class="event__type-input  visually-hidden" type="radio" name="event-type">
-        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}" data-type="${type}">${capitilizeFirstLetter(type)}</label>
+        <label class="event__type-label  event__type-label--${type}" for="event-type-${type}" data-type="${type}">${capitalizeFirstLetter(type)}</label>
       </div>`))
     .join(``);
 };
@@ -194,7 +194,7 @@ const createEventEditorTemplate = (eventItem, destinations, tripOffers, editStat
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination">
-            ${capitilizeFirstLetter(type)} ${pickEventPretext(type)}
+            ${capitalizeFirstLetter(type)} ${pickEventPretext(type)}
           </label>
           <select class="event__input  event__input--destination" id="event-destination" 
             name="event-destination" value="${destination.name}" list="destination-list"
@@ -433,9 +433,9 @@ export default class EventEditor extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this.setEditState(EditState.SAVING);
     this._defineSelectedOffers();
     this._sourceItem = this._item;
+    this.setEditState(EditState.SAVING);
     this._callback.formSubmit(this._item);
   }
 

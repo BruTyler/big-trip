@@ -70,7 +70,7 @@ export const UpdateType = {
 };
 
 export const TabNavItem = {
-  TABLE: `tasks`,
+  TABLE: `table`,
   STATS: `stats`
 };
 
@@ -118,4 +118,10 @@ export const MessageText = {
   CRASH: `Oops, something went wrong. Try again later`,
   NO_POINTS: `Click New Event to create your first point`,
   LOADING: `Loading...`
+};
+
+export const StoreSubKey = {
+  POINTS: `points`,
+  DESTINATIONS: `destinations`,
+  OFFERS: `offers`,
 };

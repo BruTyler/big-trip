@@ -27,21 +27,21 @@ export default class Trip {
     this._eventSorterComponent = null;
     this._msgComponent = null;
 
-    this._handleModeChange = this._handleModeChange.bind(this);
-    this._handleViewAction = this._handleViewAction.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
-    this._handleMenuEvent = this._handleMenuEvent.bind(this);
+    this._modeChangeHandler = this._modeChangeHandler.bind(this);
+    this._viewActionHandler = this._viewActionHandler.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
+    this._menuEventHandler = this._menuEventHandler.bind(this);
     this._createPoint = this._createPoint.bind(this);
-    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
 
-    this._menuModel.addObserver(this._handleMenuEvent);
+    this._menuModel.addObserver(this._menuEventHandler);
 
-    this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, modelStore, this._handleViewAction);
+    this._pointNewPresenter = new PointNewPresenter(this._tripEventsContainer, modelStore, this._viewActionHandler);
   }
 
   init() {
-    this._pointsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
+    this._pointsModel.addObserver(this._modelEventHandler);
+    this._filterModel.addObserver(this._modelEventHandler);
     this._pointNewModel.addObserver(this._createPoint);
 
     this._renderTripBoard();
@@ -50,8 +50,8 @@ export default class Trip {
   destroy() {
     this._clearTripBoard({resetSortType: true});
 
-    this._pointsModel.removeObserver(this._handleModelEvent);
-    this._filterModel.removeObserver(this._handleModelEvent);
+    this._pointsModel.removeObserver(this._modelEventHandler);
+    this._filterModel.removeObserver(this._modelEventHandler);
     this._pointNewModel.removeObserver(this._createPoint);
   }
 
@@ -60,7 +60,7 @@ export default class Trip {
       return;
     }
 
-    this._handleModeChange();
+    this._modeChangeHandler();
     this._currentSortType = DefaultValues.SORT_TYPE;
     this._pointNewPresenter.init(this._destinationsModel.getItems(), this._tripOffersModel.getItems());
   }
@@ -73,14 +73,14 @@ export default class Trip {
       .sort(getSorterRule(this._currenSortType));
   }
 
-  _handleModeChange() {
+  _modeChangeHandler() {
     this._pointNewPresenter.destroy();
     Object
       .values(this._pointStorage)
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handleViewAction(actionType, updateType, update) {
+  _viewActionHandler(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._api.updatePoint(update)
@@ -112,7 +112,7 @@ export default class Trip {
     }
   }
 
-  _handleModelEvent(updateType, payload) {
+  _modelEventHandler(updateType, payload) {
     switch (updateType) {
       case UpdateType.PATCH:
         break;
@@ -140,7 +140,7 @@ export default class Trip {
     }
   }
 
-  _handleMenuEvent(_updateType, menuItem) {
+  _menuEventHandler(_updateType, menuItem) {
     switch (menuItem) {
       case TabNavItem.TABLE:
         this._renderTripBoard();
@@ -153,7 +153,7 @@ export default class Trip {
     }
   }
 
-  _handleSortTypeChange(sortType) {
+  _sortTypeChangeHandler(sortType) {
     if (this._currenSortType === sortType) {
       return;
     }
@@ -169,7 +169,7 @@ export default class Trip {
     }
 
     this._eventSorterComponent = new EventSorterView(this._currenSortType);
-    this._eventSorterComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    this._eventSorterComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
     render(this._tripEventsContainer, this._eventSorterComponent, RenderPosition.BEFORE_END);
   }
 
@@ -183,7 +183,7 @@ export default class Trip {
   }
 
   _renderSinglePoint(pointContainer, tripEvent) {
-    const point = new PointPresenter(pointContainer, this._handleViewAction, this._handleModeChange);
+    const point = new PointPresenter(pointContainer, this._viewActionHandler, this._modeChangeHandler);
     point.init(tripEvent, this._destinationsModel.getItems(), this._tripOffersModel.getItems());
     this._pointStorage[tripEvent.id] = point;
   }

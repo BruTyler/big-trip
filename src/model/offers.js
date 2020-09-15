@@ -1,8 +1,7 @@
 import SimpleCollection from '../abstract/simple-collection.js';
-import {AdapterDecorator as Fetchable} from '../abstract/fetch-adapter.js';
+import {mixAdapter} from '../abstract/fetch-adapter.js';
 
-// eslint-disable-next-line new-cap
-export default class Offers extends Fetchable(SimpleCollection) {
+export default class Offers extends mixAdapter(SimpleCollection) {
   constructor() {
     super();
   }

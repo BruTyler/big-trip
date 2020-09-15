@@ -10,9 +10,9 @@ export default class PointNew {
 
     this._editorComponent = null;
 
-    this._handleEscKeyDown = this._handleEscKeyDown.bind(this);
-    this._handleFormSubmit = this._handleFormSubmit.bind(this);
-    this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
   }
 
   init(destinations, tripOffers) {
@@ -22,12 +22,12 @@ export default class PointNew {
 
     this._editorComponent = new EventEditorView(destinations, tripOffers);
 
-    this._editorComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._editorComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._editorComponent.setFormSubmitHandler(this._formSubmitHandler);
+    this._editorComponent.setDeleteClickHandler(this._deleteClickHandler);
 
     render(this._pointContainer, this._editorComponent, RenderPosition.AFTER_BEGIN);
 
-    document.addEventListener(`keydown`, this._handleEscKeyDown);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   destroy() {
@@ -39,7 +39,7 @@ export default class PointNew {
     this._editorComponent = null;
     this._pointNewModel.setItem(UpdateType.MINOR, null);
 
-    document.removeEventListener(`keydown`, this._handleEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   setEditState(editState) {
@@ -54,7 +54,7 @@ export default class PointNew {
     this._editorComponent.shake(resetFormState);
   }
 
-  _handleFormSubmit(point) {
+  _formSubmitHandler(point) {
     this._changeData(
         UserAction.ADD_POINT,
         UpdateType.MAJOR,
@@ -62,11 +62,11 @@ export default class PointNew {
     );
   }
 
-  _handleDeleteClick() {
+  _deleteClickHandler() {
     this.destroy();
   }
 
-  _handleEscKeyDown(evt) {
+  _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
       this.destroy();

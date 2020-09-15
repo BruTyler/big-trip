@@ -18,10 +18,10 @@ export default class Menu {
 
     this._filterPresenter = new FilterPresenter(this._controlsContainer, modelStore);
 
-    this._handleMenuClick = this._handleMenuClick.bind(this);
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._menuClickHandler = this._menuClickHandler.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._pointNewModel.addObserver(this._handleModelEvent);
+    this._pointNewModel.addObserver(this._modelEventHandler);
   }
 
   init() {
@@ -31,18 +31,18 @@ export default class Menu {
     this._buttonAddComponent = new EventAddButtonView();
     render(this._menuContainer, this._buttonAddComponent, RenderPosition.BEFORE_END);
 
-    this._tabsComponent.setMenuClickHandler(this._handleMenuClick);
-    this._buttonAddComponent.setButtonClickHandler(this._handleMenuClick);
+    this._tabsComponent.setMenuClickHandler(this._menuClickHandler);
+    this._buttonAddComponent.setButtonClickHandler(this._menuClickHandler);
 
     this._filterPresenter.init();
   }
 
-  _handleModelEvent(_event, payload) {
+  _modelEventHandler(_event, payload) {
     const isPointNewActive = payload !== null;
     this._buttonAddComponent.setDisabledButton(isPointNewActive);
   }
 
-  _handleMenuClick(menuItem) {
+  _menuClickHandler(menuItem) {
     switch (menuItem) {
       case MenuItem.ADD_NEW_EVENT:
         this._setActiveNavItem(MenuItem.TABLE);

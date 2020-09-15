@@ -1,4 +1,4 @@
-export const AdapterDecorator = (superclass = Object) => class extends superclass {
+export const mixAdapter = (superclass = Object) => class extends superclass {
   static adaptToClient(_serverStructure) {
     throw new Error(`Not implemented adaptToClient`);
   }
@@ -8,5 +8,4 @@ export const AdapterDecorator = (superclass = Object) => class extends superclas
   }
 };
 
-// eslint-disable-next-line new-cap
-export default AdapterDecorator(Object);
+export default mixAdapter(Object);

@@ -1,13 +1,12 @@
 /* eslint-disable camelcase */
-import {ObserverDecorator as Observable} from '../abstract/observer.js';
-import {AdapterDecorator as Fetchable} from '../abstract/fetch-adapter.js';
+import {mixObserver} from '../abstract/observer.js';
+import {mixAdapter} from '../abstract/fetch-adapter.js';
 import SimpleCollection from '../abstract/simple-collection.js';
 import {updateItem as updateItemById, addItem as addItemById, deleteItem as deleteItemById} from '../utils/collection.js';
 import Offers from './offers.js';
 import Destinations from './destinations.js';
 
-// eslint-disable-next-line new-cap
-export default class Points extends Fetchable(Observable(SimpleCollection)) {
+export default class Points extends mixAdapter(mixObserver(SimpleCollection)) {
   constructor() {
     super();
   }

@@ -11,9 +11,9 @@ export default class Summary {
 
     this._summaryComponent = null;
 
-    this._handleModelEvent = this._handleModelEvent.bind(this);
+    this._modelEventHandler = this._modelEventHandler.bind(this);
 
-    this._pointsModel.addObserver(this._handleModelEvent);
+    this._pointsModel.addObserver(this._modelEventHandler);
   }
 
   init() {
@@ -33,7 +33,7 @@ export default class Summary {
     remove(prevSummaryComponent);
   }
 
-  _handleModelEvent() {
+  _modelEventHandler() {
     this.init();
   }
 }

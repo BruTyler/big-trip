@@ -25,7 +25,7 @@ const createDatesTemplate = (sortedEvents) => {
 };
 
 const createCitiesTemplate = (sortedEvents) => {
-  let collapsedCities = excludeRepeatingInSequence(sortedEvents.map((event) => event.destination.name));
+  const collapsedCities = excludeRepeatingInSequence(sortedEvents.map((event) => event.destination.name));
 
   const summaryPoints = [];
   summaryPoints.push(collapsedCities[0]);
